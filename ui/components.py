@@ -79,7 +79,7 @@ def create_fact_check_panel(fact_check_results: list[FactCheckResult]) -> str:
     """
     if not fact_check_results:
         return """
-        <div class="fact-check-empty" style="color: #666666 !important; background-color: #f8f9fa !important; padding: 16px; border-radius: 8px;">
+        <div class="fact-check-empty">
             <p>No citations detected in this message.</p>
             <p>Academic citations will be automatically fact-checked and appear here.</p>
         </div>
@@ -92,7 +92,7 @@ def create_fact_check_panel(fact_check_results: list[FactCheckResult]) -> str:
         comments_html += comment_html
 
     panel_html = f"""
-    <div class="fact-check-panel" style="color: #333333 !important; background-color: #f8f9fa !important; padding: 16px; border-radius: 8px;">
+    <div class="fact-check-panel">
         <div class="fact-check-results">
             {comments_html}
         </div>
@@ -259,7 +259,7 @@ def create_javascript_components() -> str:
 
     <style>
     .active-highlight {
-        box-shadow: 0 0 0 2px #2196F3 !important;
+        box-shadow: 0 0 0 2px #2196F3;
         z-index: 10;
         position: relative;
     }
@@ -291,8 +291,8 @@ def format_message_with_citations(
 
     # Wrap highlighted text in container
     message_html = f"""
-    <div class="message-with-citations" style="color: #333333 !important; background-color: #f8f9fa !important; padding: 12px; border-radius: 6px;">
-        <div style="color: #333333 !important;">{highlighted_text}</div>
+    <div class="message-with-citations">
+        <div>{highlighted_text}</div>
     </div>
     {create_javascript_components()}
     """

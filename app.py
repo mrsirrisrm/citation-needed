@@ -158,18 +158,11 @@ def create_interface():
     except Exception as e:
         print(f"Could not load CSS: {e}")
 
-    # Force light theme for better text visibility
-    light_theme = gr.themes.Default(
-        primary_hue="blue",
-        secondary_hue="gray",
-    )
-
     with gr.Blocks(
-        title="Citation Fact-Checker",
-        theme=light_theme,
+        title="Citation Needed",
         css=custom_css
     ) as interface:
-        gr.Markdown("# Citation Fact-Checker")
+        gr.Markdown("# Citation Needed")
         gr.Markdown("Chat with AI and get automatic fact-checking of academic citations")
 
         # System status
