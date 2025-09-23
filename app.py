@@ -3,6 +3,8 @@ import os
 import gradio as gr
 from dotenv import load_dotenv
 
+from async_processor import TaskStatus, async_processor, create_async_task_id
+
 # Import our components
 from models.chat_model import create_chat_model
 from models.fact_checker import create_fact_checker
@@ -14,6 +16,42 @@ from ui.components import format_message_with_citations
 # Load environment variables
 load_dotenv()
 
+# Add Flask for async task status endpoints
+import threading
+
+from flask import Flask, jsonify
+
+
+# Create Flask app for async endpoints
+flask_app = Flask(__name__)
+
+@flask_app.route('/task_status/<task_id>')
+def get_task_status(task_id):
+    """Get status of an async task"""
+    try:
+        status = app.get_task_status(task_id)
+        if status['status'] == 'not_found':
+            return jsonify({'error': 'Task not found'}), 404
+
+        result = app.get_task_result(task_id)
+        return jsonify({
+            'status': status['status'],
+            'completed': status['completed'],
+            'progress': status['progress'],
+            'error': status['error'],
+            'result': result
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def run_flask_server():
+    """Run Flask server in a separate thread"""
+    flask_app.run(host='127.0.0.1', port=5001, debug=False)
+
+# Start Flask server in background thread
+flask_thread = threading.Thread(target=run_flask_server, daemon=True)
+flask_thread.start()
+
 
 class CitationFactChecker:
     """Main application class that coordinates all components"""
@@ -24,6 +62,7 @@ class CitationFactChecker:
         self.chat_model = None
         self.ner_extractor = None
         self.fact_checker = None
+        self.pending_tasks = {}  # Store task IDs for async operations
 
         self._initialize_components()
 
@@ -31,10 +70,32 @@ class CitationFactChecker:
         """Initialize all components with error handling"""
         try:
             print("Initializing search client...")
-            self.search_client = create_search_client()
-            print(f"Search client: {'✓' if self.search_client.validate_setup() else '✗'}")
+            # Check if SearXNG URL is configured
+            searxng_url = os.getenv("SEARXNG_URL")
+            use_searxng = bool(searxng_url)
+
+            if use_searxng:
+                print(f"Using SearXNG at: {searxng_url}")
+            else:
+                print("Using Firecrawl (external API)")
+
+            self.search_client = create_search_client(use_searxng=use_searxng)
+
+            # Validate the client
+            if self.search_client.validate_setup():
+                client_type = "SearXNG" if use_searxng else "Firecrawl"
+                print(f"✓ Search client ({client_type}): OK")
+            else:
+                print("✗ Search client validation failed")
+
         except Exception as e:
             print(f"Search client error: {e}")
+            # Fall back to mock client
+            try:
+                self.search_client = create_search_client(use_mock=True)
+                print("✓ Fallback to mock search client")
+            except Exception as e2:
+                print(f"Mock client fallback failed: {e2}")
 
         try:
             print("Initializing chat model...")
@@ -57,7 +118,7 @@ class CitationFactChecker:
         except Exception as e:
             print(f"Fact checker error: {e}")
 
-    def process_message(self, message: str, history: list[list[str]]) -> tuple[str, str]:
+    def process_message(self, message: str, history: list[list[str]]) -> tuple[str, str, str]:
         """
         Process a chat message and return response with fact-checking
 
@@ -66,7 +127,7 @@ class CitationFactChecker:
             history: Chat history
 
         Returns:
-            Tuple of (chat_response, fact_check_panel_html)
+            Tuple of (chat_response, fact_check_panel_html, task_id)
         """
         # Step 1: Generate chat response
         if self.chat_model:
@@ -86,29 +147,377 @@ class CitationFactChecker:
             except Exception as e:
                 print(f"Citation extraction error: {e}")
 
-        # Step 3: Fact-check citations
-        fact_check_results = []
-        if citations and self.fact_checker:
-            try:
-                fact_check_results = self.fact_checker.fact_check_citations(citations)
-                print(f"Fact-checked {len(fact_check_results)} citations")
-            except Exception as e:
-                print(f"Fact-checking error: {e}")
-
-        # Step 4: Format response with citations
+        # Step 3: Create initial response without fact-checking
         try:
-            formatted_response, fact_check_panel = format_message_with_citations(
-                response, fact_check_results
+            formatted_response, initial_fact_check_panel = format_message_with_citations(
+                response, []
             )
         except Exception as e:
             formatted_response = response
-            fact_check_panel = f"<p>Error formatting results: {str(e)}</p>"
+            initial_fact_check_panel = f"<p>Error formatting results: {str(e)}</p>"
 
-        return formatted_response, fact_check_panel
+        # Step 4: Start async fact-checking if citations found
+        task_id = None
+        if citations and self.fact_checker:
+            try:
+                task_id = create_async_task_id()
+                self.pending_tasks[task_id] = {
+                    'response': response,
+                    'citations': citations,
+                    'formatted_response': formatted_response
+                }
 
+                # Register callback for task completion
+                async_processor.register_callback(task_id, self._on_fact_check_complete)
 
-# Global app instance
-app = CitationFactChecker()
+                # Start async fact-checking
+                async_processor.create_task(
+                    task_id,
+                    self.fact_checker.fact_check_citations,
+                    citations,
+                    timeout=45.0  # 45 second timeout for fact-checking
+                )
+
+                print(f"Started async fact-checking task: {task_id}")
+
+            except Exception as e:
+                print(f"Failed to start async fact-checking: {e}")
+                # Fall back to synchronous processing
+                try:
+                    fact_check_results = self.fact_checker.fact_check_citations(citations)
+                    formatted_response, fact_check_panel = format_message_with_citations(
+                        response, fact_check_results
+                    )
+                    return formatted_response, fact_check_panel, None
+                except Exception as e2:
+                    print(f"Synchronous fallback also failed: {e2}")
+                    return formatted_response, initial_fact_check_panel, None
+
+        return formatted_response, initial_fact_check_panel, task_id
+
+    def _on_fact_check_complete(self, task_id: str, fact_check_results: list = None, error: str = None):
+        """Callback when async fact-checking completes"""
+        print(f"Async fact-checking completed for task {task_id}")
+
+        if error:
+            print(f"Fact-checking error: {error}")
+            return
+
+        if fact_check_results and task_id in self.pending_tasks:
+            task_data = self.pending_tasks[task_id]
+            try:
+                # Format the response with fact-check results
+                formatted_response, fact_check_panel = format_message_with_citations(
+                    task_data['response'], fact_check_results
+                )
+
+                # Store the updated result for UI refresh
+                task_data['updated_response'] = formatted_response
+                task_data['fact_check_panel'] = fact_check_panel
+                task_data['completed'] = True
+
+                print(f"Fact-checking results ready for task {task_id}")
+
+            except Exception as e:
+                print(f"Error formatting async fact-check results: {e}")
+
+    def get_task_status(self, task_id: str) -> dict:
+        """Get status of an async task"""
+        if task_id not in self.pending_tasks:
+            return {'status': 'not_found'}
+
+        task = async_processor.get_task(task_id)
+        if not task:
+            return {'status': 'not_found'}
+
+        return {
+            'status': task.status.value,
+            'progress': task.progress,
+            'error': task.error,
+            'completed': task.status == TaskStatus.COMPLETED
+        }
+
+    def get_task_result(self, task_id: str) -> dict:
+        """Get the result of a completed async task"""
+        if task_id not in self.pending_tasks:
+            return None
+
+        task_data = self.pending_tasks.get(task_id, {})
+        if task_data.get('completed'):
+            return {
+                'formatted_response': task_data.get('updated_response'),
+                'fact_check_panel': task_data.get('fact_check_panel')
+            }
+        return None
+
+    def _get_usage_html(self) -> str:
+        """Generate HTML for usage statistics panel"""
+        try:
+            from usage_tracker import usage_tracker
+
+            # Get daily statistics
+            daily_stats = usage_tracker.get_daily_stats()
+
+            html = f"""
+            <div class="usage-stats">
+                <h3>📊 Usage Statistics (Last 24 Hours)</h3>
+
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">{daily_stats.total_calls}</div>
+                        <div class="stat-label">Total Calls</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${daily_stats.total_cost_usd:.4f}</div>
+                        <div class="stat-label">Total Cost</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{daily_stats.successful_calls}</div>
+                        <div class="stat-label">Successful</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{daily_stats.total_tokens:,}</div>
+                        <div class="stat-label">Tokens Used</div>
+                    </div>
+                </div>
+
+                <div class="success-rate">
+                    <strong>Success Rate:</strong> {daily_stats.successful_calls/max(1, daily_stats.total_calls)*100:.1f}%
+                </div>
+
+                <div class="avg-duration">
+                    <strong>Avg Duration:</strong> {daily_stats.average_duration:.2f}s
+                </div>
+            """
+
+            if daily_stats.provider_breakdown:
+                html += """
+                <div class="provider-breakdown">
+                    <h4>🏢 Provider Breakdown</h4>
+                """
+                for provider, stats in daily_stats.provider_breakdown.items():
+                    success_rate = stats['successful_calls'] / max(1, stats['calls']) * 100
+                    html += f"""
+                    <div class="provider-stat">
+                        <span class="provider-name">{provider.upper()}</span>
+                        <span class="provider-calls">{stats['calls']} calls</span>
+                        <span class="provider-cost">${stats['cost_usd']:.4f}</span>
+                        <span class="provider-success">{success_rate:.1f}%</span>
+                    </div>
+                    """
+                html += "</div>"
+
+            if daily_stats.top_endpoints:
+                html += """
+                <div class="top-endpoints">
+                    <h4>🔝 Top Endpoints</h4>
+                """
+                for i, endpoint in enumerate(daily_stats.top_endpoints[:5], 1):
+                    html += f"""
+                    <div class="endpoint-stat">
+                        <span class="endpoint-rank">{i}.</span>
+                        <span class="endpoint-name">{endpoint['endpoint']}</span>
+                        <span class="endpoint-calls">{endpoint['calls']} calls</span>
+                    </div>
+                    """
+                html += "</div>"
+
+            html += """
+            </div>
+
+            <style>
+            .usage-stats {
+                padding: 15px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }
+            .stat-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                margin: 20px 0;
+            }
+            .stat-card {
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 15px;
+                text-align: center;
+                border: 1px solid #e9ecef;
+            }
+            .stat-number {
+                font-size: 24px;
+                font-weight: bold;
+                color: #2c3e50;
+                margin-bottom: 5px;
+            }
+            .stat-label {
+                font-size: 12px;
+                color: #6c757d;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            .success-rate, .avg-duration {
+                margin: 10px 0;
+                font-size: 14px;
+            }
+            .provider-breakdown, .top-endpoints {
+                margin-top: 20px;
+            }
+            .provider-stat, .endpoint-stat {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #f0f0f0;
+                font-size: 13px;
+            }
+            .provider-name {
+                font-weight: 600;
+            }
+            .provider-cost {
+                color: #28a745;
+                font-weight: 500;
+            }
+            .provider-success {
+                color: #17a2b8;
+            }
+            .endpoint-rank {
+                color: #6c757d;
+                font-weight: 600;
+            }
+            .endpoint-calls {
+                color: #6c757d;
+            }
+            </style>
+            """
+
+            return html
+
+        except Exception as e:
+            return f"<div class='error'>Error loading usage statistics: {str(e)}</div>"
+
+    def _get_status_html(self) -> str:
+        """Generate HTML for system status panel"""
+        try:
+            # Fill in dynamic values first
+            chat_status = "✅ Ready" if self.chat_model and self.chat_model.validate_setup() else "❌ Error"
+            search_status = "✅ Ready" if self.search_client and self.search_client.validate_setup() else "❌ Error"
+            ner_status = "✅ Ready" if self.ner_extractor and self.ner_extractor.validate_setup() else "❌ Error"
+            fact_check_status = "✅ Ready" if self.fact_checker and self.fact_checker.validate_setup() else "❌ Error"
+
+            # Determine search backend
+            search_backend = "Firecrawl"
+            if hasattr(self.search_client, '__class__'):
+                if "SearXNG" in str(type(self.search_client)):
+                    search_backend = "SearXNG (Local)"
+                elif "Mock" in str(type(self.search_client)):
+                    search_backend = "Mock (Testing)"
+
+            html = f"""
+            <div class="system-status">
+                <h3>🔧 System Status</h3>
+
+                <div class="status-grid">
+                    <div class="status-item">
+                        <span class="status-label">Chat Model:</span>
+                        <span class="status-value">{chat_status}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Search Client:</span>
+                        <span class="status-value">{search_status}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">NER Extractor:</span>
+                        <span class="status-value">{ner_status}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Fact Checker:</span>
+                        <span class="status-value">{fact_check_status}</span>
+                    </div>
+                </div>
+
+                <div class="async-status">
+                    <h4>🔄 Async Tasks</h4>
+                    <div class="task-count">
+                        Active Tasks: <span id="active-task-count">{len(self.pending_tasks)}</span>
+                    </div>
+                </div>
+
+                <div class="system-info">
+                    <h4>ℹ️ System Information</h4>
+                    <div class="info-item">
+                        <span class="info-label">Search Backend:</span>
+                        <span class="info-value">{search_backend}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Usage Tracking:</span>
+                        <span class="info-value">✅ Active</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Data File:</span>
+                        <span class="info-value">usage_data.json</span>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+            .system-status {{
+                padding: 15px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }}
+            .status-grid {{
+                display: grid;
+                gap: 10px;
+                margin: 15px 0;
+            }}
+            .status-item {{
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 12px;
+                background: #f8f9fa;
+                border-radius: 6px;
+                border: 1px solid #e9ecef;
+                font-size: 13px;
+            }}
+            .status-label {{
+                font-weight: 600;
+                color: #495057;
+            }}
+            .status-value {{
+                color: #28a745;
+                font-weight: 500;
+            }}
+            .status-value.error {{
+                color: #dc3545;
+            }}
+            .async-status, .system-info {{
+                margin-top: 20px;
+            }}
+            .task-count {{
+                font-size: 14px;
+                padding: 8px 12px;
+                background: #e3f2fd;
+                border-radius: 6px;
+                margin: 10px 0;
+            }}
+            .info-item {{
+                display: flex;
+                justify-content: space-between;
+                padding: 6px 0;
+                font-size: 13px;
+            }}
+            .info-label {{
+                font-weight: 600;
+                color: #495057;
+            }}
+            .info-value {{
+                color: #17a2b8;
+            }}
+            </style>
+            """
+
+            return html
+
+        except Exception as e:
+            return f"<div class='error'>Error loading system status: {str(e)}</div>"
 
 
 def chat_response(message, history):
@@ -130,7 +539,44 @@ def chat_response(message, history):
                     converted_history.append([user_content, assistant_content])
                     user_content = None
 
-        response, fact_check_html = app.process_message(message, converted_history)
+        response, fact_check_html, task_id = app.process_message(message, converted_history)
+
+        # Add loading indicator if async fact-checking is running
+        if task_id:
+            fact_check_html = f"""
+            <div class="fact-check-loading" id="task-{task_id}">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 20px;">
+                    <div class="loading-spinner"></div>
+                    <div>
+                        <strong>Fact-checking citations...</strong>
+                        <div style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                            This may take 30-45 seconds. Results will appear here automatically.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                setTimeout(function() {{
+                    if (window.startAsyncPolling) {{
+                        window.startAsyncPolling('{task_id}', '#task-{task_id}');
+                    }}
+                }}, 1000);
+            </script>
+            <style>
+            .loading-spinner {{
+                width: 20px;
+                height: 20px;
+                border: 2px solid #f3f3f3;
+                border-top: 2px solid #3498db;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }}
+            @keyframes spin {{
+                0% {{ transform: rotate(0deg); }}
+                100% {{ transform: rotate(360deg); }}
+            }}
+            </style>
+            """
 
         # Add new messages to history
         history = history or []
@@ -144,6 +590,11 @@ def chat_response(message, history):
         history.append({"role": "user", "content": message})
         history.append({"role": "assistant", "content": error_response})
         return history, f"<p style='color: red;'>{error_response}</p>"
+
+  
+
+# Global app instance (created after class definition)
+app = CitationFactChecker()
 
 
 def create_interface():
@@ -169,6 +620,65 @@ def create_interface():
         custom_js = f"""
         () => {{
             {js_content}
+
+            // Async fact-checking functionality
+            window.activeTasks = {{}};
+            window.pollIntervals = {{}};
+
+            window.startAsyncPolling = function(taskId, factCheckPanelSelector) {{
+                console.log('🔄 Starting async polling for task:', taskId);
+
+                if (window.pollIntervals[taskId]) {{
+                    clearInterval(window.pollIntervals[taskId]);
+                }}
+
+                window.activeTasks[taskId] = {{
+                    startTime: Date.now(),
+                    pollCount: 0
+                }};
+
+                window.pollIntervals[taskId] = setInterval(function() {{
+                    window.pollAsyncTask(taskId, factCheckPanelSelector);
+                }}, 2000); // Poll every 2 seconds
+
+                // Timeout after 60 seconds
+                setTimeout(function() {{
+                    if (window.pollIntervals[taskId]) {{
+                        clearInterval(window.pollIntervals[taskId]);
+                        delete window.pollIntervals[taskId];
+                        console.log('⏰ Polling timeout for task:', taskId);
+                    }}
+                }}, 60000);
+            }};
+
+            window.pollAsyncTask = function(taskId, factCheckPanelSelector) {{
+                const task = window.activeTasks[taskId];
+                if (!task) return;
+
+                task.pollCount++;
+
+                // Make AJAX request to check task status
+                fetch('/task_status/' + taskId)
+                    .then(response => response.json())
+                    .then(data => {{
+                        if (data.completed && data.result) {{
+                            // Task completed, update the UI
+                            clearInterval(window.pollIntervals[taskId]);
+                            delete window.pollIntervals[taskId];
+
+                            const panel = document.querySelector(factCheckPanelSelector);
+                            if (panel) {{
+                                panel.innerHTML = data.result.fact_check_panel;
+                                console.log('✅ Async fact-checking completed for task:', taskId);
+                            }}
+                        }}
+                    }})
+                    .catch(error => {{
+                        console.error('❌ Error polling task status:', error);
+                    }});
+            }};
+
+            console.log('🚀 Async fact-checking system initialized');
         }}
         """
     except Exception as e:
@@ -296,13 +806,29 @@ def create_interface():
                     submit_btn = gr.Button("Send", variant="primary")
                     clear_btn = gr.Button("Clear")
 
-            # Fact-check panel (right side)
+            # Right side panel with tabs
             with gr.Column(scale=1):
-                gr.Markdown("### Fact-Check Results")
-                fact_check_panel = gr.HTML(
-                    value="<div class='fact-check-empty'><p>Fact-checking results will appear here after you send a message.</p></div>",
-                    elem_classes=["fact-check-panel"],
-                )
+                with gr.Tabs():
+                    # Fact-check results tab
+                    with gr.TabItem("Fact-Check Results"):
+                        fact_check_panel = gr.HTML(
+                            value="<div class='fact-check-empty'><p>Fact-checking results will appear here after you send a message.</p></div>",
+                            elem_classes=["fact-check-panel"],
+                        )
+
+                    # Usage statistics tab
+                    with gr.TabItem("Usage Statistics"):
+                        usage_panel = gr.HTML(
+                            value=app._get_usage_html(),
+                            elem_classes=["usage-panel"],
+                        )
+
+                    # System status tab
+                    with gr.TabItem("System Status"):
+                        status_panel = gr.HTML(
+                            value=app._get_status_html(),
+                            elem_classes=["status-panel"],
+                        )
 
         # Event handlers
         submit_btn.click(
@@ -328,8 +854,10 @@ def create_interface():
                 [],
                 "",
                 "<div class='fact-check-empty'><p>Fact-checking results will appear here after you send a message.</p></div>",
+                app._get_usage_html(),
+                app._get_status_html(),
             ),
-            outputs=[chatbot, msg, fact_check_panel],
+            outputs=[chatbot, msg, fact_check_panel, usage_panel, status_panel],
         )
 
     return interface
