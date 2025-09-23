@@ -950,10 +950,32 @@ def create_interface():
 
     .comment-header {
         cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+        border: 1px solid rgba(128, 128, 128, 0.1);
+        border-radius: 6px;
+        margin-bottom: 8px;
     }
 
     .comment-header:hover {
         background: rgba(128, 128, 128, 0.05);
+    }
+
+    .comment-citation-text {
+        font-weight: 500;
+        color: #333;
+        line-height: 1.4;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .comment-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: flex-start;
     }
     """
 
