@@ -34,13 +34,27 @@ def get_task_status(task_id):
             return jsonify({'error': 'Task not found'}), 404
 
         result = app.get_task_result(task_id)
-        return jsonify({
+
+        # Check for partial results
+        task_data = app.pending_tasks.get(task_id, {})
+        partial_panel = task_data.get('partial_panel')
+
+        response = {
             'status': status['status'],
             'completed': status['completed'],
             'progress': status['progress'],
             'error': status['error'],
             'result': result
-        })
+        }
+
+        # Include partial results if available
+        if partial_panel:
+            response['partial_panel'] = partial_panel
+            response['has_partial'] = True
+        else:
+            response['has_partial'] = False
+
+        return jsonify(response)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -170,10 +184,20 @@ class CitationFactChecker:
                 # Register callback for task completion
                 async_processor.register_callback(task_id, self._on_fact_check_complete)
 
+                # Register progress callback for real-time updates
+                async_processor.register_progress_callback(task_id, self._on_fact_check_progress)
+
+                # Create wrapper function with progress callback
+                def fact_check_with_progress(citations_list):
+                    return self.fact_checker.fact_check_citations(
+                        citations_list,
+                        progress_callback=lambda progress, result: async_processor.update_progress(task_id, progress, result)
+                    )
+
                 # Start async fact-checking
                 async_processor.create_task(
                     task_id,
-                    self.fact_checker.fact_check_citations,
+                    fact_check_with_progress,
                     citations,
                     timeout=45.0  # 45 second timeout for fact-checking
                 )
@@ -194,6 +218,24 @@ class CitationFactChecker:
                     return formatted_response, initial_fact_check_panel, None
 
         return formatted_response, initial_fact_check_panel, task_id
+
+    def _on_fact_check_progress(self, task_id: str, progress: float, partial_result=None):
+        """Callback when async fact-checking progress updates"""
+        print(f"🔄 Progress update for task {task_id}: {progress:.1%}")
+
+        if partial_result and task_id in self.pending_tasks:
+            # Store partial result and update UI immediately
+            task_data = self.pending_tasks[task_id]
+            if 'partial_results' not in task_data:
+                task_data['partial_results'] = []
+
+            task_data['partial_results'].append(partial_result)
+
+            # Create a real-time update panel
+            partial_panel = self._create_partial_results_panel(task_data['partial_results'], progress)
+            task_data['partial_panel'] = partial_panel
+
+            print(f"📊 Partial result {len(task_data['partial_results'])} available for task {task_id}")
 
     def _on_fact_check_complete(self, task_id: str, fact_check_results: list = None, error: str = None):
         """Callback when async fact-checking completes"""
@@ -236,6 +278,123 @@ class CitationFactChecker:
             'error': task.error,
             'completed': task.status == TaskStatus.COMPLETED
         }
+
+    def _create_partial_results_panel(self, partial_results: list, progress: float) -> str:
+        """Create HTML for partial results panel showing real-time progress"""
+        from ui.components import create_fact_check_panel
+
+        if not partial_results:
+            return ""
+
+        # Show completed results
+        panel_html = f"""
+        <div class="fact-check-partial">
+            <div class="progress-header">
+                <div class="progress-text">
+                    🔄 Fact-checking in progress: {len(partial_results)} of {len(partial_results) + int((1 - progress) * 10)} citations completed
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {progress * 100}%"></div>
+                </div>
+            </div>
+            <div class="partial-results">
+        """
+
+        # Show completed results
+        for i, result in enumerate(partial_results):
+            citation_id = f"partial_{i + 1}"
+            comment_html = self._create_partial_citation_comment(citation_id, result)
+            panel_html += comment_html
+
+        panel_html += """
+            </div>
+        </div>
+        """
+
+        return panel_html
+
+    def _create_partial_citation_comment(self, citation_id: str, result) -> str:
+        """Create HTML for a partial citation comment"""
+        import html
+
+        # Truncate citation text for display
+        citation_display = result.citation.text
+        if len(citation_display) > 60:
+            citation_display = citation_display[:57] + "..."
+
+        status_class = self._get_status_class(result.verification_status)
+        status_display = self._get_status_display(result.verification_status)
+
+        # Create sources HTML
+        sources_html = ""
+        if result.sources_found:
+            sources_html = '<div class="comment-sources">'
+            sources_html += '<div class="sources-title">Sources Found:</div>'
+
+            for source in result.sources_found[:3]:  # Show max 3 sources
+                title = html.escape(source.get("title", "Untitled")[:50])
+                url = html.escape(source.get("url", ""))
+
+                sources_html += f"""
+                <div class="source-item">
+                    <a href="{url}" target="_blank" class="source-title" rel="noopener noreferrer">
+                        {title}
+                    </a>
+                    <div class="source-url">{url}</div>
+                </div>
+                """
+
+            sources_html += "</div>"
+
+        # Confidence score
+        confidence_html = f"""
+        <div class="confidence-score">
+            Confidence: {result.confidence:.1%}
+        </div>
+        """
+
+        comment_html = f"""
+        <div class="citation-comment partial-result" data-citation-id="{citation_id}">
+            <div class="comment-header">
+                <div class="comment-citation-text">{html.escape(citation_display)}</div>
+                <div class="comment-status">
+                    <span class="status-badge {status_class}">{status_display}</span>
+                    <span class="partial-badge">✓</span>
+                </div>
+            </div>
+            <div class="comment-content" id="content_{citation_id}">
+                <div class="comment-explanation">
+                    {html.escape(result.explanation)}
+                </div>
+                {sources_html}
+                {confidence_html}
+            </div>
+        </div>
+        """
+
+        return comment_html
+
+    def _get_status_class(self, status: str) -> str:
+        """Get CSS class for verification status"""
+        status_classes = {
+            "verified": "status-verified citation-verified",
+            "not_found": "status-not-found citation-not-found",
+            "contradicted": "status-contradicted citation-contradicted",
+            "error": "status-error citation-error",
+            "partial": "status-not-found citation-not-found",
+        }
+        return status_classes.get(status, "status-error citation-error")
+
+    def _get_status_display(self, status: str) -> str:
+        """Get display text for verification status"""
+        status_displays = {
+            "verified": "Verified",
+            "not_found": "Not Found",
+            "contradicted": "Contradicted",
+            "error": "Error",
+            "partial": "Partial",
+        }
+        return status_displays.get(status, "Unknown")
 
     def get_task_result(self, task_id: str) -> dict:
         """Get the result of a completed async task"""
@@ -558,7 +717,27 @@ def chat_response(message, history):
             <script>
                 setTimeout(function() {{
                     if (window.startAsyncPolling) {{
-                        window.startAsyncPolling('{task_id}', '#task-{task_id}');
+                        console.log('🚀 Attempting to start polling for task {task_id}');
+                        // Try multiple selectors in case Gradio changes the structure
+                        const selectors = [
+                            '#task-{task_id}',
+                            '.fact-check-panel',
+                            '.fact-check-panel .fact-check-loading',
+                            '.fact-check-loading'
+                        ];
+
+                        for (const selector of selectors) {{
+                            const element = document.querySelector(selector);
+                            if (element) {{
+                                console.log('✅ Found element with selector:', selector);
+                                window.startAsyncPolling('{task_id}', selector);
+                                break;
+                            }}
+                        }}
+
+                        if (!document.querySelector(selectors.join(','))) {{
+                            console.error('❌ No fact-check panel found with any selector:', selectors);
+                        }}
                     }}
                 }}, 1000);
             </script>
@@ -574,6 +753,44 @@ def chat_response(message, history):
             @keyframes spin {{
                 0% {{ transform: rotate(0deg); }}
                 100% {{ transform: rotate(360deg); }}
+            }}
+            .progress-header {{
+                margin-bottom: 15px;
+                padding: 10px;
+                background: #f8f9fa;
+                border-radius: 5px;
+            }}
+            .progress-text {{
+                font-size: 0.9em;
+                color: #666;
+                margin-bottom: 5px;
+            }}
+            .progress-bar {{
+                width: 100%;
+                height: 8px;
+                background: #e9ecef;
+                border-radius: 4px;
+                overflow: hidden;
+            }}
+            .progress-fill {{
+                height: 100%;
+                background: linear-gradient(90deg, #3498db, #2ecc71);
+                border-radius: 4px;
+                transition: width 0.3s ease;
+            }}
+            .partial-badge {{
+                background: #2ecc71;
+                color: white;
+                padding: 2px 6px;
+                border-radius: 10px;
+                font-size: 0.8em;
+                margin-left: 5px;
+            }}
+            .partial-result {{
+                border-left: 3px solid #2ecc71;
+            }}
+            .fact-check-partial {{
+                margin-bottom: 20px;
             }}
             </style>
             """
@@ -627,6 +844,7 @@ def create_interface():
 
             window.startAsyncPolling = function(taskId, factCheckPanelSelector) {{
                 console.log('🔄 Starting async polling for task:', taskId);
+                console.log('🎯 Panel selector:', factCheckPanelSelector);
 
                 if (window.pollIntervals[taskId]) {{
                     clearInterval(window.pollIntervals[taskId]);
@@ -637,6 +855,7 @@ def create_interface():
                     pollCount: 0
                 }};
 
+                console.log('✅ Task registered, starting polling interval');
                 window.pollIntervals[taskId] = setInterval(function() {{
                     window.pollAsyncTask(taskId, factCheckPanelSelector);
                 }}, 2000); // Poll every 2 seconds
@@ -661,16 +880,31 @@ def create_interface():
                 fetch('/task_status/' + taskId)
                     .then(response => response.json())
                     .then(data => {{
+                        console.log('📊 Poll response for task', taskId, ':', data);
+
+                        const panel = document.querySelector(factCheckPanelSelector);
+                        if (!panel) {{
+                            console.error('❌ Panel not found with selector:', factCheckPanelSelector);
+                            return;
+                        }}
+
+                        // Handle partial results (real-time updates)
+                        if (data.has_partial && data.partial_panel) {{
+                            panel.innerHTML = data.partial_panel;
+                            console.log('🔄 Updated panel with partial results for task:', taskId);
+                        }}
+
+                        // Handle completed task
                         if (data.completed && data.result) {{
                             // Task completed, update the UI
                             clearInterval(window.pollIntervals[taskId]);
                             delete window.pollIntervals[taskId];
 
-                            const panel = document.querySelector(factCheckPanelSelector);
-                            if (panel) {{
-                                panel.innerHTML = data.result.fact_check_panel;
-                                console.log('✅ Async fact-checking completed for task:', taskId);
-                            }}
+                            panel.innerHTML = data.result.fact_check_panel;
+                            console.log('✅ Async fact-checking completed for task:', taskId);
+                            console.log('🎯 Final panel content length:', data.result.fact_check_panel.length);
+                        }} else if (!data.has_partial) {{
+                            console.log('⏳ Task not completed yet:', data);
                         }}
                     }})
                     .catch(error => {{

@@ -24,6 +24,7 @@ class AsyncTask:
     started_at: float = None
     completed_at: float = None
     progress: float = 0.0  # 0.0 to 1.0
+    partial_results: list = field(default_factory=list)  # For real-time updates
 
 
 class AsyncProcessor:
@@ -32,6 +33,7 @@ class AsyncProcessor:
     def __init__(self, default_timeout: float = 30.0):
         self.tasks: dict[str, AsyncTask] = {}
         self.callbacks: dict[str, Callable] = {}
+        self.progress_callbacks: dict[str, Callable] = {}
         self._lock = threading.Lock()
         self.default_timeout = default_timeout
 
@@ -140,6 +142,26 @@ class AsyncProcessor:
     def register_callback(self, task_id: str, callback: Callable):
         """Register a callback to be called when task completes"""
         self.callbacks[task_id] = callback
+
+    def register_progress_callback(self, task_id: str, callback: Callable):
+        """Register a callback to be called when task progress updates"""
+        self.progress_callbacks[task_id] = callback
+
+    def update_progress(self, task_id: str, progress: float, partial_result=None):
+        """Update task progress and optionally add a partial result"""
+        with self._lock:
+            task = self.tasks.get(task_id)
+            if task:
+                task.progress = max(0.0, min(1.0, progress))
+                if partial_result is not None:
+                    task.partial_results.append(partial_result)
+
+        # Trigger progress callback if registered
+        if task_id in self.progress_callbacks:
+            try:
+                self.progress_callbacks[task_id](task_id, progress, partial_result)
+            except Exception as e:
+                print(f"Progress callback error for task {task_id}: {e}")
 
     def get_task(self, task_id: str) -> AsyncTask:
         """Get task status and result"""

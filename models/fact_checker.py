@@ -81,22 +81,30 @@ class FactChecker:
             print(f"⚠️  Citation parser initialization failed: {e}")
             self.citation_parser = None
 
-    def fact_check_citations(self, citations: list[Citation]) -> list[FactCheckResult]:
+    def fact_check_citations(self, citations: list[Citation], progress_callback=None) -> list[FactCheckResult]:
         """
         Fact-check a list of citations
 
         Args:
             citations: List of Citation objects to verify
+            progress_callback: Optional callback function for progress updates
 
         Returns:
             List of FactCheckResult objects
         """
         results = []
+        total_citations = len(citations)
 
-        for citation in citations:
+        for i, citation in enumerate(citations):
             try:
                 result = self._fact_check_single_citation(citation)
                 results.append(result)
+
+                # Update progress if callback provided
+                if progress_callback:
+                    progress = (i + 1) / total_citations
+                    progress_callback(progress, result)
+
             except Exception as e:
                 # Create error result
                 error_result = FactCheckResult(
@@ -108,6 +116,11 @@ class FactChecker:
                     search_queries_used=[],
                 )
                 results.append(error_result)
+
+                # Update progress even for errors
+                if progress_callback:
+                    progress = (i + 1) / total_citations
+                    progress_callback(progress, error_result)
 
         return results
 
