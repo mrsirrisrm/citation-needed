@@ -1,0 +1,326 @@
+/* Citation Fact-Checker UI Styles */
+
+/* Main container styling */
+.gradio-container {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Chat area styling */
+.chat-container {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chatbot {
+    background: #ffffff;
+    border-radius: 8px;
+    min-height: 500px;
+}
+
+/* Message styling with citations */
+.message-with-citations {
+    position: relative;
+    line-height: 1.6;
+    padding: 12px;
+    margin: 8px 0;
+    background: #fafafa;
+    border-radius: 6px;
+    border-left: 3px solid #2196F3;
+}
+
+/* Highlighted citation text */
+.citation-highlight {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 3px;
+    padding: 1px 3px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.citation-highlight:hover {
+    background-color: #ffe082;
+    border-color: #ffc107;
+}
+
+/* Citation status indicators */
+.citation-verified {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.citation-not-found {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.citation-contradicted {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.citation-error {
+    background-color: #e2e3e5;
+    border-color: #d6d8db;
+}
+
+/* Fact-check panel styling */
+.fact-check-panel {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 16px;
+    margin-left: 16px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.fact-check-panel h3 {
+    margin: 0 0 16px 0;
+    color: #495057;
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 8px;
+}
+
+/* Citation comment styling */
+.citation-comment {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    margin: 8px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.citation-comment:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.comment-header {
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comment-header:hover {
+    background: #e9ecef;
+}
+
+.comment-citation-text {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #495057;
+    font-weight: 500;
+    flex-grow: 1;
+    margin-right: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.comment-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-badge {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-verified {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-not-found {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.status-contradicted {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.status-error {
+    background: #e2e3e5;
+    color: #383d41;
+    border: 1px solid #d6d8db;
+}
+
+.expand-icon {
+    transition: transform 0.2s ease;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.expand-icon.expanded {
+    transform: rotate(180deg);
+}
+
+/* Comment content */
+.comment-content {
+    padding: 12px;
+    display: none;
+    border-top: 1px solid #dee2e6;
+}
+
+.comment-content.expanded {
+    display: block;
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 500px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+}
+
+.comment-explanation {
+    margin-bottom: 12px;
+    color: #495057;
+    line-height: 1.5;
+}
+
+.comment-sources {
+    margin-top: 8px;
+}
+
+.sources-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 6px;
+}
+
+.source-item {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 8px;
+    margin: 4px 0;
+    font-size: 13px;
+}
+
+.source-title {
+    font-weight: 600;
+    color: #2196F3;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.source-title:hover {
+    color: #0d7377;
+    text-decoration: underline;
+}
+
+.source-url {
+    color: #6c757d;
+    font-size: 11px;
+    word-break: break-all;
+}
+
+.confidence-score {
+    font-size: 11px;
+    color: #6c757d;
+    margin-top: 8px;
+    text-align: right;
+}
+
+/* Empty state */
+.fact-check-empty {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 20px;
+}
+
+/* Loading state */
+.fact-check-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: #6c757d;
+}
+
+.loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #e9ecef;
+    border-top: 2px solid #2196F3;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .fact-check-panel {
+        margin-left: 0;
+        margin-top: 16px;
+    }
+
+    .comment-citation-text {
+        max-width: 150px;
+    }
+
+    .source-url {
+        word-break: break-all;
+    }
+}
+
+/* Accessibility improvements */
+.citation-highlight:focus {
+    outline: 2px solid #2196F3;
+    outline-offset: 2px;
+}
+
+.comment-header:focus {
+    outline: 2px solid #2196F3;
+    outline-offset: -2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .citation-highlight {
+        border-width: 2px;
+    }
+
+    .citation-comment {
+        border-width: 2px;
+    }
+}
