@@ -25,6 +25,14 @@ from flask import Flask, jsonify
 # Create Flask app for async endpoints
 flask_app = Flask(__name__)
 
+# Add CORS headers for development
+@flask_app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
+
 @flask_app.route('/task_status/<task_id>')
 def get_task_status(task_id):
     """Get status of an async task"""
@@ -172,9 +180,13 @@ class CitationFactChecker:
 
         # Step 4: Start async fact-checking if citations found
         task_id = None
+        print(f"🔍 Citations found: {len(citations)}, Fact checker available: {self.fact_checker is not None}")
+
         if citations and self.fact_checker:
             try:
+                print(f"🚀 Starting async fact-checking for {len(citations)} citations")
                 task_id = create_async_task_id()
+                print(f"🆔 Generated task ID: {task_id}")
                 self.pending_tasks[task_id] = {
                     'response': response,
                     'citations': citations,
@@ -702,6 +714,7 @@ def chat_response(message, history):
 
         # Add loading indicator if async fact-checking is running
         if task_id:
+            print(f"📱 Creating loading HTML for task: {task_id}")
             fact_check_html = f"""
             <div class="fact-check-loading" id="task-{task_id}">
                 <div style="display: flex; align-items: center; gap: 10px; padding: 20px;">
@@ -711,88 +724,12 @@ def chat_response(message, history):
                         <div style="font-size: 0.9em; color: #666; margin-top: 5px;">
                             This may take 30-45 seconds. Results will appear here automatically.
                         </div>
+                        <div class="debug-info" style="font-size: 0.8em; color: #999; margin-top: 10px;">
+                            Task ID: {task_id}
+                        </div>
                     </div>
                 </div>
             </div>
-            <script>
-                setTimeout(function() {{
-                    if (window.startAsyncPolling) {{
-                        console.log('🚀 Attempting to start polling for task {task_id}');
-                        // Try multiple selectors in case Gradio changes the structure
-                        const selectors = [
-                            '#task-{task_id}',
-                            '.fact-check-panel',
-                            '.fact-check-panel .fact-check-loading',
-                            '.fact-check-loading'
-                        ];
-
-                        for (const selector of selectors) {{
-                            const element = document.querySelector(selector);
-                            if (element) {{
-                                console.log('✅ Found element with selector:', selector);
-                                window.startAsyncPolling('{task_id}', selector);
-                                break;
-                            }}
-                        }}
-
-                        if (!document.querySelector(selectors.join(','))) {{
-                            console.error('❌ No fact-check panel found with any selector:', selectors);
-                        }}
-                    }}
-                }}, 1000);
-            </script>
-            <style>
-            .loading-spinner {{
-                width: 20px;
-                height: 20px;
-                border: 2px solid #f3f3f3;
-                border-top: 2px solid #3498db;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-            }}
-            @keyframes spin {{
-                0% {{ transform: rotate(0deg); }}
-                100% {{ transform: rotate(360deg); }}
-            }}
-            .progress-header {{
-                margin-bottom: 15px;
-                padding: 10px;
-                background: #f8f9fa;
-                border-radius: 5px;
-            }}
-            .progress-text {{
-                font-size: 0.9em;
-                color: #666;
-                margin-bottom: 5px;
-            }}
-            .progress-bar {{
-                width: 100%;
-                height: 8px;
-                background: #e9ecef;
-                border-radius: 4px;
-                overflow: hidden;
-            }}
-            .progress-fill {{
-                height: 100%;
-                background: linear-gradient(90deg, #3498db, #2ecc71);
-                border-radius: 4px;
-                transition: width 0.3s ease;
-            }}
-            .partial-badge {{
-                background: #2ecc71;
-                color: white;
-                padding: 2px 6px;
-                border-radius: 10px;
-                font-size: 0.8em;
-                margin-left: 5px;
-            }}
-            .partial-result {{
-                border-left: 3px solid #2ecc71;
-            }}
-            .fact-check-partial {{
-                margin-bottom: 20px;
-            }}
-            </style>
             """
 
         # Add new messages to history
@@ -808,6 +745,8 @@ def chat_response(message, history):
         history.append({"role": "assistant", "content": error_response})
         return history, f"<p style='color: red;'>{error_response}</p>"
 
+
+  
   
 
 # Global app instance (created after class definition)
@@ -841,6 +780,44 @@ def create_interface():
             // Async fact-checking functionality
             window.activeTasks = {{}};
             window.pollIntervals = {{}};
+
+            // Auto-detect and start polling for new tasks
+            function setupTaskObserver() {{
+                // Create a MutationObserver to watch for new loading indicators
+                const observer = new MutationObserver(function(mutations) {{
+                    mutations.forEach(function(mutation) {{
+                        mutation.addedNodes.forEach(function(node) {{
+                            if (node.nodeType === Node.ELEMENT_NODE) {{
+                                // Check if this is a loading indicator
+                                const loadingElement = node.querySelector && node.querySelector('.fact-check-loading');
+                                if (loadingElement) {{
+                                    const taskId = loadingElement.id.replace('task-', '');
+                                    if (taskId) {{
+                                        console.log('🎯 Auto-detected new task:', taskId);
+                                        startAsyncPolling(taskId, '#' + loadingElement.id);
+                                    }}
+                                }}
+                                // Also check if the node itself is a loading indicator
+                                if (node.classList && node.classList.contains('fact-check-loading')) {{
+                                    const taskId = node.id.replace('task-', '');
+                                    if (taskId) {{
+                                        console.log('🎯 Auto-detected new task (direct):', taskId);
+                                        startAsyncPolling(taskId, '#' + node.id);
+                                    }}
+                                }}
+                            }}
+                        }});
+                    }});
+                }});
+
+                // Start observing the entire document
+                observer.observe(document.body, {{
+                    childList: true,
+                    subtree: true
+                }});
+
+                console.log('👀 Task observer setup complete');
+            }}
 
             window.startAsyncPolling = function(taskId, factCheckPanelSelector) {{
                 console.log('🔄 Starting async polling for task:', taskId);
@@ -877,7 +854,7 @@ def create_interface():
                 task.pollCount++;
 
                 // Make AJAX request to check task status
-                fetch('/task_status/' + taskId)
+                fetch('http://127.0.0.1:5001/task_status/' + taskId)
                     .then(response => response.json())
                     .then(data => {{
                         console.log('📊 Poll response for task', taskId, ':', data);
@@ -912,6 +889,8 @@ def create_interface():
                     }});
             }};
 
+            // Initialize the task observer to auto-detect new tasks
+            setupTaskObserver();
             console.log('🚀 Async fact-checking system initialized');
         }}
         """
