@@ -1,10 +1,12 @@
 import html
-from typing import List, Dict, Any
-from models.ner_extractor import Citation
+
 from models.fact_checker import FactCheckResult
+from models.ner_extractor import Citation
 
 
-def create_highlighted_text(text: str, citations: List[Citation], fact_check_results: List[FactCheckResult]) -> str:
+def create_highlighted_text(
+    text: str, citations: list[Citation], fact_check_results: list[FactCheckResult]
+) -> str:
     """
     Create HTML with highlighted citations and associated fact-check results
 
@@ -38,7 +40,9 @@ def create_highlighted_text(text: str, citations: List[Citation], fact_check_res
 
         # Get fact-check result
         fact_result = citation_results.get(citation_key)
-        status_class = _get_status_class(fact_result.verification_status if fact_result else 'unknown')
+        status_class = _get_status_class(
+            fact_result.verification_status if fact_result else "unknown"
+        )
 
         # Create highlighted span
         citation_text = citation.text
@@ -49,26 +53,21 @@ def create_highlighted_text(text: str, citations: List[Citation], fact_check_res
             f'id="{citation_id}" '
             f'data-citation-id="{citation_id}" '
             f'title="Click to see fact-check details">'
-            f'{escaped_text}'
-            f'</span>'
+            f"{escaped_text}"
+            f"</span>"
         )
 
         # Replace in text
         highlighted_text = (
-            highlighted_text[:citation.start] +
-            highlight_html +
-            highlighted_text[citation.end:]
+            highlighted_text[: citation.start] + highlight_html + highlighted_text[citation.end :]
         )
 
-        citation_ids[citation_id] = {
-            'citation': citation,
-            'result': fact_result
-        }
+        citation_ids[citation_id] = {"citation": citation, "result": fact_result}
 
     return highlighted_text
 
 
-def create_fact_check_panel(fact_check_results: List[FactCheckResult]) -> str:
+def create_fact_check_panel(fact_check_results: list[FactCheckResult]) -> str:
     """
     Create HTML for the fact-check panel showing all results
 
@@ -121,8 +120,8 @@ def _create_citation_comment(citation_id: str, result: FactCheckResult) -> str:
         sources_html += '<div class="sources-title">Sources Found:</div>'
 
         for source in result.sources_found[:3]:  # Show max 3 sources
-            title = html.escape(source.get('title', 'Untitled')[:50])
-            url = html.escape(source.get('url', ''))
+            title = html.escape(source.get("title", "Untitled")[:50])
+            url = html.escape(source.get("url", ""))
 
             sources_html += f"""
             <div class="source-item">
@@ -133,9 +132,11 @@ def _create_citation_comment(citation_id: str, result: FactCheckResult) -> str:
             </div>
             """
 
-        sources_html += '</div>'
-    elif result.verification_status == 'not_found':
-        sources_html = '<div class="comment-sources"><div class="sources-title">No sources found</div></div>'
+        sources_html += "</div>"
+    elif result.verification_status == "not_found":
+        sources_html = (
+            '<div class="comment-sources"><div class="sources-title">No sources found</div></div>'
+        )
 
     # Confidence score
     confidence_html = f"""
@@ -169,25 +170,25 @@ def _create_citation_comment(citation_id: str, result: FactCheckResult) -> str:
 def _get_status_class(status: str) -> str:
     """Get CSS class for verification status"""
     status_classes = {
-        'verified': 'status-verified citation-verified',
-        'not_found': 'status-not-found citation-not-found',
-        'contradicted': 'status-contradicted citation-contradicted',
-        'error': 'status-error citation-error',
-        'partial': 'status-not-found citation-not-found',
+        "verified": "status-verified citation-verified",
+        "not_found": "status-not-found citation-not-found",
+        "contradicted": "status-contradicted citation-contradicted",
+        "error": "status-error citation-error",
+        "partial": "status-not-found citation-not-found",
     }
-    return status_classes.get(status, 'status-error citation-error')
+    return status_classes.get(status, "status-error citation-error")
 
 
 def _get_status_display(status: str) -> str:
     """Get display text for verification status"""
     status_displays = {
-        'verified': 'Verified',
-        'not_found': 'Not Found',
-        'contradicted': 'Contradicted',
-        'error': 'Error',
-        'partial': 'Partial',
+        "verified": "Verified",
+        "not_found": "Not Found",
+        "contradicted": "Contradicted",
+        "error": "Error",
+        "partial": "Partial",
     }
-    return status_displays.get(status, 'Unknown')
+    return status_displays.get(status, "Unknown")
 
 
 def create_loading_panel() -> str:
@@ -266,7 +267,9 @@ def create_javascript_components() -> str:
     """
 
 
-def format_message_with_citations(message: str, fact_check_results: List[FactCheckResult]) -> tuple[str, str]:
+def format_message_with_citations(
+    message: str, fact_check_results: list[FactCheckResult]
+) -> tuple[str, str]:
     """
     Format a message with citations and return both highlighted text and fact-check panel
 

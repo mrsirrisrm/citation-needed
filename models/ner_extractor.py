@@ -1,18 +1,20 @@
-import spacy
 import re
-from typing import List, Dict, Any, NamedTuple
 from dataclasses import dataclass
+from typing import Any
+
+import spacy
 
 
 @dataclass
 class Citation:
     """Represents an academic citation found in text"""
+
     text: str  # The full citation text
     start: int  # Character start position
     end: int  # Character end position
     citation_type: str  # Type of citation (journal, book, etc.)
     confidence: float  # Confidence score (0.0 to 1.0)
-    authors: List[str] = None  # Extracted author names
+    authors: list[str] = None  # Extracted author names
     title: str = None  # Extracted title
     year: str = None  # Publication year
     journal: str = None  # Journal name
@@ -26,48 +28,50 @@ class AcademicNER:
         """Initialize the NER pipeline"""
         try:
             self.nlp = spacy.load("en_core_web_sm")
-        except OSError:
+        except OSError as e:
             raise OSError(
                 "spaCy English model not found. "
                 "Please install it with: python -m spacy download en_core_web_sm"
-            )
+            ) from e
 
         # Academic citation patterns
         self.citation_patterns = [
             # Author-year format: (Smith et al., 2023)
-            r'\([^()]*(?:et al\.?|&|and)[^()]*, ?\d{4}[a-z]?\)',
-
+            r"\([^()]*(?:et al\.?|&|and)[^()]*, ?\d{4}[a-z]?\)",
             # Journal format: Smith, J. (2023). Title. Journal Name, 12(3), 45-67.
-            r'[A-Z][a-zA-Z\-\']+(?:,\s*[A-Z]\.?)*\.?\s*\(\d{4}[a-z]?\)\.?\s*[^.]+\.\s*[^,.]+,?\s*\d+(?:\(\d+\))?,?\s*\d+[-–]\d+\.?',
-
+            r"[A-Z][a-zA-Z\-\']+(?:,\s*[A-Z]\.?)*\.?\s*\(\d{4}[a-z]?\)\.?\s*[^.]+\.\s*[^,.]+,?\s*\d+(?:\(\d+\))?,?\s*\d+[-–]\d+\.?",
             # Book format: Author, A. (Year). Book Title. Publisher.
-            r'[A-Z][a-zA-Z\-\']+(?:,\s*[A-Z]\.?)*\.?\s*\(\d{4}[a-z]?\)\.?\s*[^.]+\.\s*[^.]+\.',
-
+            r"[A-Z][a-zA-Z\-\']+(?:,\s*[A-Z]\.?)*\.?\s*\(\d{4}[a-z]?\)\.?\s*[^.]+\.\s*[^.]+\.",
             # DOI pattern
-            r'doi:\s*10\.\d+/[^\s]+',
-
+            r"doi:\s*10\.\d+/[^\s]+",
             # arXiv pattern
-            r'arXiv:\d+\.\d+',
-
+            r"arXiv:\d+\.\d+",
             # ISBN pattern
-            r'ISBN:?\s*(?:\d{1,5}[-\s]?\d{1,7}[-\s]?\d{1,6}[-\s]?[\dX]|\d{13})',
-
+            r"ISBN:?\s*(?:\d{1,5}[-\s]?\d{1,7}[-\s]?\d{1,6}[-\s]?[\dX]|\d{13})",
             # URL to academic sources
-            r'https?://(?:www\.)?(?:doi\.org|arxiv\.org|pubmed\.ncbi\.nlm\.nih\.gov|scholar\.google\.com)[^\s]+',
+            r"https?://(?:www\.)?(?:doi\.org|arxiv\.org|pubmed\.ncbi\.nlm\.nih\.gov|scholar\.google\.com)[^\s]+",
         ]
 
         # Compile patterns
-        self.compiled_patterns = [re.compile(pattern, re.IGNORECASE) for pattern in self.citation_patterns]
+        self.compiled_patterns = [
+            re.compile(pattern, re.IGNORECASE) for pattern in self.citation_patterns
+        ]
 
         # Academic keywords that boost confidence
         self.academic_keywords = {
-            'journals': ['journal', 'proceedings', 'conference', 'symposium', 'review'],
-            'publication_types': ['paper', 'article', 'study', 'research', 'publication'],
-            'institutions': ['university', 'institute', 'laboratory', 'school', 'college'],
-            'academic_terms': ['peer-reviewed', 'peer reviewed', 'published', 'citation', 'bibliography']
+            "journals": ["journal", "proceedings", "conference", "symposium", "review"],
+            "publication_types": ["paper", "article", "study", "research", "publication"],
+            "institutions": ["university", "institute", "laboratory", "school", "college"],
+            "academic_terms": [
+                "peer-reviewed",
+                "peer reviewed",
+                "published",
+                "citation",
+                "bibliography",
+            ],
         }
 
-    def extract_citations(self, text: str) -> List[Citation]:
+    def extract_citations(self, text: str) -> list[Citation]:
         """
         Extract academic citations from text
 
@@ -79,8 +83,8 @@ class AcademicNER:
         """
         citations = []
 
-        # Process with spaCy for entities
-        doc = self.nlp(text)
+        # Process with spaCy for entities (currently unused but ready for enhancement)
+        # doc = self.nlp(text)
 
         # Pattern-based extraction
         for i, pattern in enumerate(self.compiled_patterns):
@@ -104,7 +108,7 @@ class AcademicNER:
                     end=end,
                     citation_type=self._classify_citation_type(citation_text),
                     confidence=confidence,
-                    **components
+                    **components,
                 )
 
                 citations.append(citation)
@@ -114,14 +118,16 @@ class AcademicNER:
 
         return sorted(citations, key=lambda c: c.start)
 
-    def _calculate_confidence(self, citation_text: str, full_text: str, pattern_index: int) -> float:
+    def _calculate_confidence(
+        self, citation_text: str, full_text: str, pattern_index: int
+    ) -> float:
         """Calculate confidence score for a citation match"""
         base_confidence = {
             0: 0.9,  # Author-year format
-            1: 0.95, # Full journal format
-            2: 0.85, # Book format
-            3: 0.99, # DOI
-            4: 0.99, # arXiv
+            1: 0.95,  # Full journal format
+            2: 0.85,  # Book format
+            3: 0.99,  # DOI
+            4: 0.99,  # arXiv
             5: 0.8,  # ISBN
             6: 0.9,  # Academic URLs
         }.get(pattern_index, 0.5)
@@ -129,20 +135,22 @@ class AcademicNER:
         # Boost confidence based on academic keywords in surrounding context
         context_window = 200
         start_pos = max(0, full_text.find(citation_text) - context_window)
-        end_pos = min(len(full_text), full_text.find(citation_text) + len(citation_text) + context_window)
+        end_pos = min(
+            len(full_text), full_text.find(citation_text) + len(citation_text) + context_window
+        )
         context = full_text[start_pos:end_pos].lower()
 
         keyword_boost = 0.0
-        for category, keywords in self.academic_keywords.items():
+        for _category, keywords in self.academic_keywords.items():
             for keyword in keywords:
                 if keyword in context:
                     keyword_boost += 0.1
 
         # Citation format quality checks
         format_boost = 0.0
-        if re.search(r'\d{4}', citation_text):  # Has year
+        if re.search(r"\d{4}", citation_text):  # Has year
             format_boost += 0.1
-        if re.search(r'[A-Z][a-z]+', citation_text):  # Has proper names
+        if re.search(r"[A-Z][a-z]+", citation_text):  # Has proper names
             format_boost += 0.1
         if len(citation_text) > 20:  # Reasonable length
             format_boost += 0.1
@@ -153,54 +161,48 @@ class AcademicNER:
         """Classify the type of citation"""
         text_lower = citation_text.lower()
 
-        if 'doi:' in text_lower or 'doi.org' in text_lower:
-            return 'doi'
-        elif 'arxiv' in text_lower:
-            return 'preprint'
-        elif 'isbn' in text_lower:
-            return 'book'
-        elif any(word in text_lower for word in ['journal', 'proceedings', 'conference']):
-            return 'journal'
-        elif re.search(r'\([^()]*\d{4}[^()]*\)', citation_text):
-            return 'author_year'
+        if "doi:" in text_lower or "doi.org" in text_lower:
+            return "doi"
+        elif "arxiv" in text_lower:
+            return "preprint"
+        elif "isbn" in text_lower:
+            return "book"
+        elif any(word in text_lower for word in ["journal", "proceedings", "conference"]):
+            return "journal"
+        elif re.search(r"\([^()]*\d{4}[^()]*\)", citation_text):
+            return "author_year"
         else:
-            return 'unknown'
+            return "unknown"
 
-    def _extract_citation_components(self, citation_text: str) -> Dict[str, Any]:
+    def _extract_citation_components(self, citation_text: str) -> dict[str, Any]:
         """Extract structured components from citation text"""
-        components = {
-            'authors': [],
-            'title': None,
-            'year': None,
-            'journal': None,
-            'doi': None
-        }
+        components = {"authors": [], "title": None, "year": None, "journal": None, "doi": None}
 
         # Extract year
-        year_match = re.search(r'\b(19|20)\d{2}\b', citation_text)
+        year_match = re.search(r"\b(19|20)\d{2}\b", citation_text)
         if year_match:
-            components['year'] = year_match.group()
+            components["year"] = year_match.group()
 
         # Extract DOI
-        doi_match = re.search(r'10\.\d+/[^\s,]+', citation_text)
+        doi_match = re.search(r"10\.\d+/[^\s,]+", citation_text)
         if doi_match:
-            components['doi'] = doi_match.group()
+            components["doi"] = doi_match.group()
 
         # Basic author extraction (simplified)
         author_patterns = [
-            r'([A-Z][a-z]+(?:,\s*[A-Z]\.?)*)',  # Last, F.
-            r'([A-Z]\.\s*[A-Z][a-z]+)',  # F. Last
+            r"([A-Z][a-z]+(?:,\s*[A-Z]\.?)*)",  # Last, F.
+            r"([A-Z]\.\s*[A-Z][a-z]+)",  # F. Last
         ]
 
         for pattern in author_patterns:
             authors = re.findall(pattern, citation_text)
             if authors:
-                components['authors'] = authors[:3]  # Limit to first 3 authors
+                components["authors"] = authors[:3]  # Limit to first 3 authors
                 break
 
         return components
 
-    def _remove_overlaps(self, citations: List[Citation]) -> List[Citation]:
+    def _remove_overlaps(self, citations: list[Citation]) -> list[Citation]:
         """Remove overlapping citations, keeping the highest confidence ones"""
         if not citations:
             return citations
@@ -213,7 +215,7 @@ class AcademicNER:
             # Check if this citation overlaps with any already selected
             overlaps = False
             for selected in filtered:
-                if (citation.start < selected.end and citation.end > selected.start):
+                if citation.start < selected.end and citation.end > selected.start:
                     overlaps = True
                     break
 

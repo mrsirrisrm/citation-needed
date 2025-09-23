@@ -61,11 +61,34 @@ citation-needed/
    # Edit .env with your API keys
    ```
 
-   Required environment variables:
-   ```
-   OPENROUTER_API_KEY=your_openrouter_api_key_here
-   FIRECRAWL_API_KEY=your_firecrawl_api_key_here
-   ```
+### Running the Application
+
+```bash
+python app.py
+```
+
+The application will be available at `http://localhost:7860`
+
+### Development
+
+#### Code Quality
+The project uses Ruff for linting and formatting:
+```bash
+# Check code quality
+ruff check .
+
+# Auto-fix issues
+ruff check --fix .
+
+# Format code
+ruff format .
+```
+
+#### Required Environment Variables
+```
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+FIRECRAWL_API_KEY=your_firecrawl_api_key_here
+```
 
 ### Running the Application
 

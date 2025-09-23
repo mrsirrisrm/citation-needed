@@ -1,10 +1,11 @@
-import dspy
 import os
-from typing import List, Dict, Any
+
+import dspy
 
 
 class ChatSignature(dspy.Signature):
     """Generate a helpful response to the user's question"""
+
     context = dspy.InputField(desc="Previous conversation context")
     user_message = dspy.InputField(desc="Current user message")
     response = dspy.OutputField(desc="Helpful and informative response")
@@ -26,7 +27,7 @@ class ChatModel:
             api_base="https://openrouter.ai/api/v1",
             model=self.chat_model_name,
             max_tokens=2048,
-            temperature=0.7
+            temperature=0.7,
         )
 
         # Set as default LM for DSPy
@@ -35,7 +36,7 @@ class ChatModel:
         # Initialize the chat chain
         self.chat_chain = dspy.ChainOfThought(ChatSignature)
 
-    def chat(self, message: str, history: List[List[str]] = None) -> str:
+    def chat(self, message: str, history: list[list[str]] = None) -> str:
         """
         Generate a chat response
 
@@ -54,10 +55,7 @@ class ChatModel:
                     context += f"User: {user_msg}\nAssistant: {assistant_msg}\n"
 
             # Generate response
-            result = self.chat_chain(
-                context=context,
-                user_message=message
-            )
+            result = self.chat_chain(context=context, user_message=message)
 
             return result.response
 

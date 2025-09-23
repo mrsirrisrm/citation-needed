@@ -1,6 +1,6 @@
 import os
-import requests
-from typing import List, Dict, Any, Optional
+from typing import Any
+
 from firecrawl import FirecrawlApp
 
 
@@ -17,9 +17,9 @@ class FirecrawlSearchClient:
         try:
             self.app = FirecrawlApp(api_key=self.api_key)
         except Exception as e:
-            raise ValueError(f"Failed to initialize Firecrawl client: {e}")
+            raise ValueError(f"Failed to initialize Firecrawl client: {e}") from e
 
-    def search(self, query: str, num_results: int = 5) -> List[Dict[str, str]]:
+    def search(self, query: str, num_results: int = 5) -> list[dict[str, str]]:
         """
         Search for web content using Firecrawl
 
@@ -35,20 +35,35 @@ class FirecrawlSearchClient:
             search_results = self.app.search(
                 query=query,
                 num_results=num_results,
-                include_domains=['scholar.google.com', 'pubmed.ncbi.nlm.nih.gov', 'arxiv.org',
-                                'doi.org', 'researchgate.net', 'ieee.org', 'acm.org', 'springer.com',
-                                'nature.com', 'science.org', 'wiley.com', 'elsevier.com', 'cambridge.org',
-                                'oxfordjournals.org', 'tandfonline.com', 'sagepub.com', 'jstor.org']
+                include_domains=[
+                    "scholar.google.com",
+                    "pubmed.ncbi.nlm.nih.gov",
+                    "arxiv.org",
+                    "doi.org",
+                    "researchgate.net",
+                    "ieee.org",
+                    "acm.org",
+                    "springer.com",
+                    "nature.com",
+                    "science.org",
+                    "wiley.com",
+                    "elsevier.com",
+                    "cambridge.org",
+                    "oxfordjournals.org",
+                    "tandfonline.com",
+                    "sagepub.com",
+                    "jstor.org",
+                ],
             )
 
             processed_results = []
-            for result in search_results.get('results', [])[:num_results]:
+            for result in search_results.get("results", [])[:num_results]:
                 processed_result = {
-                    'title': result.get('title', 'Untitled'),
-                    'url': result.get('url', ''),
-                    'content': result.get('content', ''),
-                    'description': result.get('description', ''),
-                    'source': 'firecrawl_search'
+                    "title": result.get("title", "Untitled"),
+                    "url": result.get("url", ""),
+                    "content": result.get("content", ""),
+                    "description": result.get("description", ""),
+                    "source": "firecrawl_search",
                 }
                 processed_results.append(processed_result)
 
@@ -58,7 +73,7 @@ class FirecrawlSearchClient:
             print(f"Search error: {e}")
             return []
 
-    def scrape_url(self, url: str) -> Dict[str, str]:
+    def scrape_url(self, url: str) -> dict[str, str]:
         """
         Scrape content from a specific URL
 
@@ -72,32 +87,34 @@ class FirecrawlSearchClient:
             result = self.app.scrape_url(
                 url=url,
                 params={
-                    'formats': ['markdown', 'html'],
-                    'includeTags': ['title', 'meta', 'h1', 'h2', 'h3', 'p', 'article'],
-                    'excludeTags': ['nav', 'footer', 'aside', 'script', 'style'],
-                    'waitFor': 1000  # Wait 1 second for page to load
-                }
+                    "formats": ["markdown", "html"],
+                    "includeTags": ["title", "meta", "h1", "h2", "h3", "p", "article"],
+                    "excludeTags": ["nav", "footer", "aside", "script", "style"],
+                    "waitFor": 1000,  # Wait 1 second for page to load
+                },
             )
 
             return {
-                'title': result.get('metadata', {}).get('title', 'Untitled'),
-                'url': url,
-                'content': result.get('content', ''),
-                'markdown': result.get('markdown', ''),
-                'metadata': result.get('metadata', {}),
-                'source': 'firecrawl_scrape'
+                "title": result.get("metadata", {}).get("title", "Untitled"),
+                "url": url,
+                "content": result.get("content", ""),
+                "markdown": result.get("markdown", ""),
+                "metadata": result.get("metadata", {}),
+                "source": "firecrawl_scrape",
             }
 
         except Exception as e:
             print(f"Scraping error for {url}: {e}")
             return {
-                'title': 'Error',
-                'url': url,
-                'content': f'Failed to scrape: {str(e)}',
-                'source': 'firecrawl_scrape'
+                "title": "Error",
+                "url": url,
+                "content": f"Failed to scrape: {str(e)}",
+                "source": "firecrawl_scrape",
             }
 
-    def enhanced_citation_search(self, citation_text: str, citation_components: Dict[str, Any]) -> List[Dict[str, str]]:
+    def enhanced_citation_search(
+        self, citation_text: str, citation_components: dict[str, Any]
+    ) -> list[dict[str, str]]:
         """
         Enhanced search specifically for academic citations
 
@@ -118,26 +135,26 @@ class FirecrawlSearchClient:
             search_queries.append(f'"{citation_text[:100]}"')
 
         # Strategy 2: Author + Year + Title
-        if citation_components.get('authors') and citation_components.get('year'):
-            author = citation_components['authors'][0] if citation_components['authors'] else ''
-            year = citation_components['year']
-            if citation_components.get('title'):
-                title_snippet = citation_components['title'][:50]
+        if citation_components.get("authors") and citation_components.get("year"):
+            author = citation_components["authors"][0] if citation_components["authors"] else ""
+            year = citation_components["year"]
+            if citation_components.get("title"):
+                title_snippet = citation_components["title"][:50]
                 search_queries.append(f'{author} {year} "{title_snippet}"')
             else:
-                search_queries.append(f'{author} {year}')
+                search_queries.append(f"{author} {year}")
 
         # Strategy 3: DOI search
-        if citation_components.get('doi'):
+        if citation_components.get("doi"):
             search_queries.append(f"doi:{citation_components['doi']}")
 
         # Strategy 4: Title only (if available)
-        if citation_components.get('title'):
+        if citation_components.get("title"):
             search_queries.append(f'"{citation_components["title"]}"')
 
         # Strategy 5: Journal + Year (if available)
-        if citation_components.get('journal') and citation_components.get('year'):
-            search_queries.append(f'{citation_components["journal"]} {citation_components["year"]}')
+        if citation_components.get("journal") and citation_components.get("year"):
+            search_queries.append(f"{citation_components['journal']} {citation_components['year']}")
 
         # Execute searches
         for query in search_queries[:3]:  # Limit to 3 queries
@@ -153,7 +170,7 @@ class FirecrawlSearchClient:
         seen_urls = set()
 
         for result in all_results:
-            url = result.get('url', '')
+            url = result.get("url", "")
             if url and url not in seen_urls:
                 unique_results.append(result)
                 seen_urls.add(url)
@@ -164,7 +181,7 @@ class FirecrawlSearchClient:
         """Validate that Firecrawl is properly configured"""
         try:
             # Test with a simple search
-            test_results = self.search("test academic paper", num_results=1)
+            self.search("test academic paper", num_results=1)
             return True  # If no exception, we're good
         except Exception as e:
             print(f"Firecrawl validation failed: {e}")
@@ -174,27 +191,29 @@ class FirecrawlSearchClient:
 class MockSearchClient:
     """Mock search client for testing when Firecrawl is not available"""
 
-    def search(self, query: str, num_results: int = 5) -> List[Dict[str, str]]:
+    def search(self, query: str, num_results: int = 5) -> list[dict[str, str]]:
         """Mock search that returns dummy results"""
         return [
             {
-                'title': f'Mock Result for: {query}',
-                'url': 'https://example.com/mock-result',
-                'content': f'This is a mock search result for the query: {query}',
-                'source': 'mock'
+                "title": f"Mock Result for: {query}",
+                "url": "https://example.com/mock-result",
+                "content": f"This is a mock search result for the query: {query}",
+                "source": "mock",
             }
         ]
 
-    def scrape_url(self, url: str) -> Dict[str, str]:
+    def scrape_url(self, url: str) -> dict[str, str]:
         """Mock scraping that returns dummy content"""
         return {
-            'title': 'Mock Scraped Content',
-            'url': url,
-            'content': f'Mock content scraped from {url}',
-            'source': 'mock'
+            "title": "Mock Scraped Content",
+            "url": url,
+            "content": f"Mock content scraped from {url}",
+            "source": "mock",
         }
 
-    def enhanced_citation_search(self, citation_text: str, citation_components: Dict[str, Any]) -> List[Dict[str, str]]:
+    def enhanced_citation_search(
+        self, citation_text: str, citation_components: dict[str, Any]
+    ) -> list[dict[str, str]]:
         """Mock enhanced search"""
         return self.search(citation_text, num_results=3)
 

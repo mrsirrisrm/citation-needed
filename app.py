@@ -1,18 +1,19 @@
-import gradio as gr
 import os
+
+import gradio as gr
 from dotenv import load_dotenv
-from typing import List, Tuple, Optional
-import time
 
 # Import our components
 from models.chat_model import create_chat_model
-from models.ner_extractor import create_ner_extractor
 from models.fact_checker import create_fact_checker
+from models.ner_extractor import create_ner_extractor
 from search.firecrawl_client import create_search_client
-from ui.components import format_message_with_citations, create_loading_panel
+from ui.components import format_message_with_citations
+
 
 # Load environment variables
 load_dotenv()
+
 
 class CitationFactChecker:
     """Main application class that coordinates all components"""
@@ -56,7 +57,7 @@ class CitationFactChecker:
         except Exception as e:
             print(f"Fact checker error: {e}")
 
-    def process_message(self, message: str, history: List[List[str]]) -> Tuple[str, str]:
+    def process_message(self, message: str, history: list[list[str]]) -> tuple[str, str]:
         """
         Process a chat message and return response with fact-checking
 
@@ -105,8 +106,10 @@ class CitationFactChecker:
 
         return formatted_response, fact_check_panel
 
+
 # Global app instance
 app = CitationFactChecker()
+
 
 def chat_response(message, history):
     """Main chat response function"""
@@ -130,6 +133,7 @@ def chat_response(message, history):
         history[-1][1] = error_response
         return history, f"<p style='color: red;'>{error_response}</p>"
 
+
 def create_interface():
     """Create the main Gradio interface"""
 
@@ -137,17 +141,14 @@ def create_interface():
     css_path = os.path.join(os.path.dirname(__file__), "ui", "styles.css")
     custom_css = ""
     try:
-        with open(css_path, 'r') as f:
+        with open(css_path) as f:
             custom_css = f.read()
     except Exception as e:
         print(f"Could not load CSS: {e}")
 
     with gr.Blocks(
-        title="Citation Fact-Checker",
-        theme=gr.themes.Soft(),
-        css=custom_css
+        title="Citation Fact-Checker", theme=gr.themes.Soft(), css=custom_css
     ) as interface:
-
         gr.Markdown("# Citation Fact-Checker")
         gr.Markdown("Chat with AI and get automatic fact-checking of academic citations")
 
@@ -155,26 +156,21 @@ def create_interface():
         with gr.Row():
             gr.Markdown(f"""
             **System Status:**
-            - Chat Model: {'✓' if app.chat_model and app.chat_model.validate_setup() else '✗'}
-            - Citation NER: {'✓' if app.ner_extractor and app.ner_extractor.validate_setup() else '✗'}
-            - Fact Checker: {'✓' if app.fact_checker and app.fact_checker.validate_setup() else '✗'}
-            - Search Client: {'✓' if app.search_client and app.search_client.validate_setup() else '✗'}
+            - Chat Model: {"✓" if app.chat_model and app.chat_model.validate_setup() else "✗"}
+            - Citation NER: {"✓" if app.ner_extractor and app.ner_extractor.validate_setup() else "✗"}
+            - Fact Checker: {"✓" if app.fact_checker and app.fact_checker.validate_setup() else "✗"}
+            - Search Client: {"✓" if app.search_client and app.search_client.validate_setup() else "✗"}
             """)
 
         with gr.Row():
             # Main chat area (left side)
             with gr.Column(scale=3):
                 chatbot = gr.Chatbot(
-                    label="Chat",
-                    height=600,
-                    show_label=True,
-                    elem_classes=["chat-container"]
+                    label="Chat", height=600, show_label=True, elem_classes=["chat-container"]
                 )
 
                 msg = gr.Textbox(
-                    label="Message",
-                    placeholder="Ask about academic topics...",
-                    lines=3
+                    label="Message", placeholder="Ask about academic topics...", lines=3
                 )
 
                 with gr.Row():
@@ -186,7 +182,7 @@ def create_interface():
                 gr.Markdown("### Fact-Check Results")
                 fact_check_panel = gr.HTML(
                     value="<div class='fact-check-empty'><p>Fact-checking results will appear here after you send a message.</p></div>",
-                    elem_classes=["fact-check-panel"]
+                    elem_classes=["fact-check-panel"],
                 )
 
         # Event handlers
@@ -196,7 +192,7 @@ def create_interface():
             outputs=[chatbot, fact_check_panel],
         ).then(
             lambda: "",  # Clear input
-            outputs=[msg]
+            outputs=[msg],
         )
 
         msg.submit(
@@ -205,15 +201,20 @@ def create_interface():
             outputs=[chatbot, fact_check_panel],
         ).then(
             lambda: "",  # Clear input
-            outputs=[msg]
+            outputs=[msg],
         )
 
         clear_btn.click(
-            lambda: ([], "", "<div class='fact-check-empty'><p>Fact-checking results will appear here after you send a message.</p></div>"),
-            outputs=[chatbot, msg, fact_check_panel]
+            lambda: (
+                [],
+                "",
+                "<div class='fact-check-empty'><p>Fact-checking results will appear here after you send a message.</p></div>",
+            ),
+            outputs=[chatbot, msg, fact_check_panel],
         )
 
     return interface
+
 
 if __name__ == "__main__":
     # Check for required environment variables
@@ -226,8 +227,4 @@ if __name__ == "__main__":
 
     # Create and launch interface
     interface = create_interface()
-    interface.launch(
-        server_name="0.0.0.0",
-        server_port=7860,
-        show_error=True
-    )
+    interface.launch(server_name="0.0.0.0", server_port=7860, show_error=True)

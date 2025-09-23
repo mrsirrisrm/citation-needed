@@ -1,32 +1,41 @@
-import dspy
 import os
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
+from typing import Any
+
+import dspy
+
 from .ner_extractor import Citation
 
 
 @dataclass
 class FactCheckResult:
     """Result of fact-checking a citation"""
+
     citation: Citation
     verification_status: str  # 'verified', 'not_found', 'contradicted', 'error'
     confidence: float  # Confidence in the verification (0.0 to 1.0)
-    sources_found: List[Dict[str, str]]  # List of found sources
+    sources_found: list[dict[str, str]]  # List of found sources
     explanation: str  # Human-readable explanation
-    search_queries_used: List[str]  # Queries that were used for search
+    search_queries_used: list[str]  # Queries that were used for search
 
 
 class AnalyzeCitationSignature(dspy.Signature):
     """Analyze a citation to generate effective search queries"""
+
     citation_text = dspy.InputField(desc="The citation text to analyze")
-    search_queries = dspy.OutputField(desc="3-5 specific search queries to verify this citation, one per line")
+    search_queries = dspy.OutputField(
+        desc="3-5 specific search queries to verify this citation, one per line"
+    )
 
 
 class VerifySourceSignature(dspy.Signature):
     """Verify if search results support or contradict a citation"""
+
     citation_text = dspy.InputField(desc="Original citation to verify")
     search_results = dspy.InputField(desc="Search results content")
-    verification_status = dspy.OutputField(desc="Status: 'verified', 'not_found', 'contradicted', or 'partial'")
+    verification_status = dspy.OutputField(
+        desc="Status: 'verified', 'not_found', 'contradicted', or 'partial'"
+    )
     confidence = dspy.OutputField(desc="Confidence score 0.0-1.0")
     explanation = dspy.OutputField(desc="Brief explanation of verification result")
 
@@ -54,7 +63,7 @@ class FactChecker:
             api_base="https://openrouter.ai/api/v1",
             model=self.fact_check_model_name,
             max_tokens=1024,
-            temperature=0.1  # Lower temperature for more consistent fact-checking
+            temperature=0.1,  # Lower temperature for more consistent fact-checking
         )
 
         # Initialize DSPy chains
@@ -62,7 +71,7 @@ class FactChecker:
             self.citation_analyzer = dspy.ChainOfThought(AnalyzeCitationSignature)
             self.source_verifier = dspy.ChainOfThought(VerifySourceSignature)
 
-    def fact_check_citations(self, citations: List[Citation]) -> List[FactCheckResult]:
+    def fact_check_citations(self, citations: list[Citation]) -> list[FactCheckResult]:
         """
         Fact-check a list of citations
 
@@ -82,11 +91,11 @@ class FactChecker:
                 # Create error result
                 error_result = FactCheckResult(
                     citation=citation,
-                    verification_status='error',
+                    verification_status="error",
                     confidence=0.0,
                     sources_found=[],
                     explanation=f"Error during fact-checking: {str(e)}",
-                    search_queries_used=[]
+                    search_queries_used=[],
                 )
                 results.append(error_result)
 
@@ -108,24 +117,24 @@ class FactChecker:
 
         return FactCheckResult(
             citation=citation,
-            verification_status=verification_result['status'],
-            confidence=verification_result['confidence'],
+            verification_status=verification_result["status"],
+            confidence=verification_result["confidence"],
             sources_found=sources_found,
-            explanation=verification_result['explanation'],
-            search_queries_used=search_queries
+            explanation=verification_result["explanation"],
+            search_queries_used=search_queries,
         )
 
-    def _generate_search_queries(self, citation: Citation) -> List[str]:
+    def _generate_search_queries(self, citation: Citation) -> list[str]:
         """Generate search queries for a citation"""
         try:
             with dspy.context(lm=self.lm):
                 result = self.citation_analyzer(citation_text=citation.text)
 
             # Parse queries from response
-            queries = [q.strip() for q in result.search_queries.split('\n') if q.strip()]
+            queries = [q.strip() for q in result.search_queries.split("\n") if q.strip()]
             return queries[:5]  # Limit to 5 queries
 
-        except Exception as e:
+        except Exception:
             # Fallback: generate basic queries from citation components
             queries = []
 
@@ -145,7 +154,7 @@ class FactChecker:
 
             return queries
 
-    def _search_for_sources(self, queries: List[str]) -> List[Dict[str, str]]:
+    def _search_for_sources(self, queries: list[str]) -> list[dict[str, str]]:
         """Search for sources using the search client"""
         if not self.search_client:
             return []
@@ -164,45 +173,44 @@ class FactChecker:
         unique_sources = []
         seen_urls = set()
         for source in sources:
-            url = source.get('url', '')
+            url = source.get("url", "")
             if url and url not in seen_urls:
                 unique_sources.append(source)
                 seen_urls.add(url)
 
         return unique_sources[:5]  # Return top 5 unique sources
 
-    def _verify_citation(self, citation: Citation, sources: List[Dict[str, str]]) -> Dict[str, Any]:
+    def _verify_citation(self, citation: Citation, sources: list[dict[str, str]]) -> dict[str, Any]:
         """Verify citation against found sources"""
 
         if not sources:
             return {
-                'status': 'not_found',
-                'confidence': 0.8,
-                'explanation': 'No sources found to verify this citation.'
+                "status": "not_found",
+                "confidence": 0.8,
+                "explanation": "No sources found to verify this citation.",
             }
 
         # Combine search results into context
         search_context = ""
         for i, source in enumerate(sources[:3]):  # Use top 3 sources
-            title = source.get('title', 'Untitled')
-            content = source.get('content', source.get('text', ''))[:500]  # First 500 chars
-            url = source.get('url', '')
+            title = source.get("title", "Untitled")
+            content = source.get("content", source.get("text", ""))[:500]  # First 500 chars
+            url = source.get("url", "")
 
-            search_context += f"Source {i+1}: {title}\nURL: {url}\nContent: {content}\n\n"
+            search_context += f"Source {i + 1}: {title}\nURL: {url}\nContent: {content}\n\n"
 
         if not search_context.strip():
             return {
-                'status': 'not_found',
-                'confidence': 0.7,
-                'explanation': 'Sources found but no content available for verification.'
+                "status": "not_found",
+                "confidence": 0.7,
+                "explanation": "Sources found but no content available for verification.",
             }
 
         # Use LLM to verify
         try:
             with dspy.context(lm=self.lm):
                 result = self.source_verifier(
-                    citation_text=citation.text,
-                    search_results=search_context
+                    citation_text=citation.text, search_results=search_context
                 )
 
             # Parse confidence score
@@ -213,16 +221,16 @@ class FactChecker:
                 confidence = 0.5
 
             return {
-                'status': result.verification_status.lower(),
-                'confidence': confidence,
-                'explanation': result.explanation
+                "status": result.verification_status.lower(),
+                "confidence": confidence,
+                "explanation": result.explanation,
             }
 
         except Exception as e:
             return {
-                'status': 'error',
-                'confidence': 0.0,
-                'explanation': f'Error during verification: {str(e)}'
+                "status": "error",
+                "confidence": 0.0,
+                "explanation": f"Error during verification: {str(e)}",
             }
 
     def validate_setup(self) -> bool:
@@ -234,7 +242,7 @@ class FactChecker:
                 start=0,
                 end=25,
                 citation_type="journal",
-                confidence=0.9
+                confidence=0.9,
             )
 
             queries = self._generate_search_queries(test_citation)
