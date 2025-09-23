@@ -17,7 +17,7 @@
 .gradio-container .markdown,
 .gradio-container .markdown p,
 .gradio-container .markdown div {
-    color: #333333 !important;
+    color: #e0e0e0 !important;
 }
 
 /* Chatbot specific text visibility */
@@ -25,7 +25,7 @@
 .gradio-container .chatbot *,
 .gradio-container [data-testid="chatbot"],
 .gradio-container [data-testid="chatbot"] * {
-    color: #333333 !important;
+    color: #e0e0e0 !important;
 }
 
 /* Chat area styling */
@@ -45,15 +45,15 @@
 
 /* Ensure Gradio chat messages have proper text color */
 .gradio-container .chatbot .message {
-    color: #333333 !important;
+    color: #e0e0e0 !important;
 }
 
 .gradio-container .chatbot .message.user {
-    color: #1a1a1a !important;
+    color: #f0f0f0 !important;
 }
 
 .gradio-container .chatbot .message.bot {
-    color: #333333 !important;
+    color: #e0e0e0 !important;
 }
 
 /* Message styling with citations */
@@ -62,91 +62,92 @@
     line-height: 1.6;
     padding: 12px;
     margin: 8px 0;
-    background: #fafafa;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 6px;
     border-left: 3px solid #2196F3;
-    color: #333333 !important;
+    color: #e0e0e0 !important;
 }
 
 /* Highlighted citation text */
 .citation-highlight {
-    background-color: #fff3cd;
-    border: 1px solid #ffeaa7;
+    background-color: rgba(255, 193, 7, 0.2);
+    border: 1px solid rgba(255, 193, 7, 0.4);
     border-radius: 3px;
     padding: 1px 3px;
     position: relative;
     cursor: pointer;
     transition: all 0.2s ease;
+    color: #f0f0f0 !important;
 }
 
 .citation-highlight:hover {
-    background-color: #ffe082;
-    border-color: #ffc107;
+    background-color: rgba(255, 193, 7, 0.3);
+    border-color: rgba(255, 193, 7, 0.6);
 }
 
 /* Citation status indicators */
 .citation-verified {
-    background-color: #d4edda;
-    border-color: #c3e6cb;
+    background-color: rgba(40, 167, 69, 0.2);
+    border-color: rgba(40, 167, 69, 0.4);
 }
 
 .citation-not-found {
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
+    background-color: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.4);
 }
 
 .citation-contradicted {
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
+    background-color: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.4);
 }
 
 .citation-error {
-    background-color: #e2e3e5;
-    border-color: #d6d8db;
+    background-color: rgba(108, 117, 125, 0.2);
+    border-color: rgba(108, 117, 125, 0.4);
 }
 
 /* Fact-check panel styling */
 .fact-check-panel {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
     padding: 16px;
     margin-left: 16px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-    color: #333333 !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
+    color: #e0e0e0 !important;
 }
 
 .fact-check-panel * {
-    color: #333333 !important;
+    color: #e0e0e0 !important;
 }
 
 .fact-check-panel h3 {
     margin: 0 0 16px 0;
-    color: #495057;
+    color: #f0f0f0;
     font-size: 18px;
     font-weight: 600;
-    border-bottom: 2px solid #e9ecef;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
     padding-bottom: 8px;
 }
 
 /* Citation comment styling */
 .citation-comment {
-    background: #ffffff;
-    border: 1px solid #dee2e6;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 6px;
     margin: 8px 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     transition: all 0.2s ease;
 }
 
 .citation-comment:hover {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .comment-header {
-    background: #f8f9fa;
+    background: rgba(255, 255, 255, 0.08);
     padding: 8px 12px;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 6px 6px 0 0;
     cursor: pointer;
     display: flex;
@@ -155,7 +156,7 @@
 }
 
 .comment-header:hover {
-    background: #e9ecef;
+    background: rgba(255, 255, 255, 0.12);
 }
 
 .comment-citation-text {
@@ -186,27 +187,27 @@
 }
 
 .status-verified {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background: rgba(40, 167, 69, 0.2);
+    color: #4caf50;
+    border: 1px solid rgba(40, 167, 69, 0.4);
 }
 
 .status-not-found {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.4);
 }
 
 .status-contradicted {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.4);
 }
 
 .status-error {
-    background: #e2e3e5;
-    color: #383d41;
-    border: 1px solid #d6d8db;
+    background: rgba(158, 158, 158, 0.2);
+    color: #9e9e9e;
+    border: 1px solid rgba(158, 158, 158, 0.4);
 }
 
 .expand-icon {
