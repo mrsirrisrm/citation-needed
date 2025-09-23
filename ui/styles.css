@@ -5,55 +5,43 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
-/* Global text visibility fixes */
+/* Global text visibility fixes - Nuclear option */
 .gradio-container * {
     color: inherit;
 }
 
-/* Force text visibility in various Gradio components */
+/* Force light theme with good contrast */
+.gradio-container {
+    background: #ffffff !important;
+    color: #333333 !important;
+}
+
+/* Ensure all text is dark and readable on light backgrounds */
+.gradio-container *,
+.gradio-container div,
+.gradio-container p,
+.gradio-container span,
+.gradio-container pre,
+.gradio-container code,
+.gradio-container h1, .gradio-container h2, .gradio-container h3,
+.gradio-container h4, .gradio-container h5, .gradio-container h6 {
+    color: #333333 !important;
+}
+
+/* Gradio chat messages */
+.gradio-container .message,
+.gradio-container .message.user,
+.gradio-container .message.bot,
 .gradio-container .prose,
-.gradio-container .prose p,
-.gradio-container .prose div,
-.gradio-container .markdown,
-.gradio-container .markdown p,
-.gradio-container .markdown div {
-    color: #e0e0e0 !important;
+.gradio-container .markdown {
+    color: #333333 !important;
+    background-color: #ffffff !important;
 }
 
-/* Chatbot specific text visibility */
-.gradio-container .chatbot,
-.gradio-container .chatbot *,
-.gradio-container [data-testid="chatbot"],
-.gradio-container [data-testid="chatbot"] * {
-    color: #e0e0e0 !important;
-}
-
-/* Chat area styling */
-.chat-container {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
+/* Chat area styling - simplified */
 .chatbot {
-    background: #ffffff;
     border-radius: 8px;
     min-height: 500px;
-    color: #333333;
-}
-
-/* Ensure Gradio chat messages have proper text color */
-.gradio-container .chatbot .message {
-    color: #e0e0e0 !important;
-}
-
-.gradio-container .chatbot .message.user {
-    color: #f0f0f0 !important;
-}
-
-.gradio-container .chatbot .message.bot {
-    color: #e0e0e0 !important;
 }
 
 /* Message styling with citations */
