@@ -58,10 +58,10 @@ class FactChecker:
             raise ValueError("OPENROUTER_API_KEY environment variable not set")
 
         # Configure DSPy with OpenRouter for fact-checking model
-        self.lm = dspy.OpenAI(
+        self.lm = dspy.LM(
+            model=self.fact_check_model_name,
             api_key=self.openrouter_api_key,
             api_base="https://openrouter.ai/api/v1",
-            model=self.fact_check_model_name,
             max_tokens=1024,
             temperature=0.1,  # Lower temperature for more consistent fact-checking
         )

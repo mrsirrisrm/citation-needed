@@ -114,23 +114,35 @@ app = CitationFactChecker()
 def chat_response(message, history):
     """Main chat response function"""
     if not message.strip():
-        return history
+        return history, ""
 
-    # Add user message to history
-    history = history or []
-    history.append([message, ""])
-
-    # Generate response and fact-check
+    # Convert history format and generate response
     try:
-        response, fact_check_html = app.process_message(message, history[:-1])
+        # Convert Gradio messages format to our format
+        converted_history = []
+        if history:
+            user_content = None
+            for msg in history:
+                if msg.get("role") == "user":
+                    user_content = msg.get("content", "")
+                elif msg.get("role") == "assistant" and user_content:
+                    assistant_content = msg.get("content", "")
+                    converted_history.append([user_content, assistant_content])
+                    user_content = None
 
-        # Update the last response in history
-        history[-1][1] = response
+        response, fact_check_html = app.process_message(message, converted_history)
+
+        # Add new messages to history
+        history = history or []
+        history.append({"role": "user", "content": message})
+        history.append({"role": "assistant", "content": response})
 
         return history, fact_check_html
     except Exception as e:
         error_response = f"Error processing message: {str(e)}"
-        history[-1][1] = error_response
+        history = history or []
+        history.append({"role": "user", "content": message})
+        history.append({"role": "assistant", "content": error_response})
         return history, f"<p style='color: red;'>{error_response}</p>"
 
 
@@ -166,7 +178,11 @@ def create_interface():
             # Main chat area (left side)
             with gr.Column(scale=3):
                 chatbot = gr.Chatbot(
-                    label="Chat", height=600, show_label=True, elem_classes=["chat-container"]
+                    label="Chat",
+                    height=600,
+                    show_label=True,
+                    elem_classes=["chat-container"],
+                    type="messages"
                 )
 
                 msg = gr.Textbox(

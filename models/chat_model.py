@@ -22,10 +22,10 @@ class ChatModel:
             raise ValueError("OPENROUTER_API_KEY environment variable not set")
 
         # Configure DSPy with OpenRouter
-        self.lm = dspy.OpenAI(
+        self.lm = dspy.LM(
+            model=self.chat_model_name,
             api_key=self.openrouter_api_key,
             api_base="https://openrouter.ai/api/v1",
-            model=self.chat_model_name,
             max_tokens=2048,
             temperature=0.7,
         )

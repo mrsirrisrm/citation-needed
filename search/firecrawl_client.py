@@ -32,32 +32,24 @@ class FirecrawlSearchClient:
         """
         try:
             # Use Firecrawl's search functionality
+            # Add academic site filters to the query for better results
+            academic_query = f"{query} site:scholar.google.com OR site:arxiv.org OR site:pubmed.ncbi.nlm.nih.gov OR site:doi.org"
             search_results = self.app.search(
-                query=query,
-                num_results=num_results,
-                include_domains=[
-                    "scholar.google.com",
-                    "pubmed.ncbi.nlm.nih.gov",
-                    "arxiv.org",
-                    "doi.org",
-                    "researchgate.net",
-                    "ieee.org",
-                    "acm.org",
-                    "springer.com",
-                    "nature.com",
-                    "science.org",
-                    "wiley.com",
-                    "elsevier.com",
-                    "cambridge.org",
-                    "oxfordjournals.org",
-                    "tandfonline.com",
-                    "sagepub.com",
-                    "jstor.org",
-                ],
+                query=academic_query,
+                limit=num_results,
             )
 
             processed_results = []
-            for result in search_results.get("results", [])[:num_results]:
+            # Handle SearchResponse object
+            if hasattr(search_results, 'data'):
+                results_list = search_results.data
+            elif hasattr(search_results, 'results'):
+                results_list = search_results.results
+            else:
+                # Fallback to dict access
+                results_list = getattr(search_results, 'data', [])
+
+            for result in results_list[:num_results]:
                 processed_result = {
                     "title": result.get("title", "Untitled"),
                     "url": result.get("url", ""),

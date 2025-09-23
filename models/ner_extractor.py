@@ -38,6 +38,10 @@ class AcademicNER:
         self.citation_patterns = [
             # Author-year format: (Smith et al., 2023)
             r"\([^()]*(?:et al\.?|&|and)[^()]*, ?\d{4}[a-z]?\)",
+            # Simpler author-year: (Smith et al. 2023)
+            r"\([A-Z][a-zA-Z\-\']+ et al\.?,? \d{4}[a-z]?\)",
+            # Author outside parentheses: Smith et al. (2023)
+            r"[A-Z][a-zA-Z\-\']+ et al\.? ?\(\d{4}[a-z]?\)",
             # Journal format: Smith, J. (2023). Title. Journal Name, 12(3), 45-67.
             r"[A-Z][a-zA-Z\-\']+(?:,\s*[A-Z]\.?)*\.?\s*\(\d{4}[a-z]?\)\.?\s*[^.]+\.\s*[^,.]+,?\s*\d+(?:\(\d+\))?,?\s*\d+[-–]\d+\.?",
             # Book format: Author, A. (Year). Book Title. Publisher.
