@@ -977,6 +977,54 @@ def create_interface():
         gap: 8px;
         justify-content: flex-start;
     }
+
+    /* Dark mode support */
+    .dark .comment-citation-text {
+        color: #e0e0e0 !important;
+    }
+
+    .dark .comment-header {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark .comment-header:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .dark .comment-content {
+        border-top-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Additional dark mode improvements */
+    .dark .status-verified {
+        background: #22c55e !important;
+        color: white !important;
+    }
+
+    .dark .status-not-found {
+        background: #f59e0b !important;
+        color: white !important;
+    }
+
+    .dark .status-contradicted {
+        background: #ef4444 !important;
+        color: white !important;
+    }
+
+    .dark .status-error {
+        background: #6b7280 !important;
+        color: white !important;
+    }
+
+    .dark .partial-badge {
+        background: #22c55e !important;
+        color: white !important;
+    }
+
+    .dark .confidence-score {
+        color: #9ca3af !important;
+    }
     """
 
     custom_css += additional_css
