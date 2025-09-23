@@ -79,7 +79,7 @@ def create_fact_check_panel(fact_check_results: list[FactCheckResult]) -> str:
     """
     if not fact_check_results:
         return """
-        <div class="fact-check-empty">
+        <div class="fact-check-empty" style="color: #666666 !important;">
             <p>No citations detected in this message.</p>
             <p>Academic citations will be automatically fact-checked and appear here.</p>
         </div>
@@ -92,7 +92,7 @@ def create_fact_check_panel(fact_check_results: list[FactCheckResult]) -> str:
         comments_html += comment_html
 
     panel_html = f"""
-    <div class="fact-check-panel">
+    <div class="fact-check-panel" style="color: #333333 !important;">
         <div class="fact-check-results">
             {comments_html}
         </div>
@@ -291,7 +291,7 @@ def format_message_with_citations(
 
     # Wrap highlighted text in container
     message_html = f"""
-    <div class="message-with-citations">
+    <div class="message-with-citations" style="color: #333333 !important;">
         {highlighted_text}
     </div>
     {create_javascript_components()}

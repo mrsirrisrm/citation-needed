@@ -5,6 +5,29 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
+/* Global text visibility fixes */
+.gradio-container * {
+    color: inherit;
+}
+
+/* Force text visibility in various Gradio components */
+.gradio-container .prose,
+.gradio-container .prose p,
+.gradio-container .prose div,
+.gradio-container .markdown,
+.gradio-container .markdown p,
+.gradio-container .markdown div {
+    color: #333333 !important;
+}
+
+/* Chatbot specific text visibility */
+.gradio-container .chatbot,
+.gradio-container .chatbot *,
+.gradio-container [data-testid="chatbot"],
+.gradio-container [data-testid="chatbot"] * {
+    color: #333333 !important;
+}
+
 /* Chat area styling */
 .chat-container {
     background: #ffffff;
@@ -17,6 +40,20 @@
     background: #ffffff;
     border-radius: 8px;
     min-height: 500px;
+    color: #333333;
+}
+
+/* Ensure Gradio chat messages have proper text color */
+.gradio-container .chatbot .message {
+    color: #333333 !important;
+}
+
+.gradio-container .chatbot .message.user {
+    color: #1a1a1a !important;
+}
+
+.gradio-container .chatbot .message.bot {
+    color: #333333 !important;
 }
 
 /* Message styling with citations */
@@ -28,6 +65,7 @@
     background: #fafafa;
     border-radius: 6px;
     border-left: 3px solid #2196F3;
+    color: #333333 !important;
 }
 
 /* Highlighted citation text */
@@ -75,6 +113,11 @@
     padding: 16px;
     margin-left: 16px;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    color: #333333 !important;
+}
+
+.fact-check-panel * {
+    color: #333333 !important;
 }
 
 .fact-check-panel h3 {
