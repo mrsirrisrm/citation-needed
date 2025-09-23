@@ -1,11 +1,21 @@
 import os
 import re
 import json
+import time
 import requests
 from typing import Any, Optional, Dict
 from urllib.parse import urlparse, urljoin
 
 from firecrawl import FirecrawlApp
+
+# Import SearXNG client for type hints
+try:
+    from .searxng_client import SearXNGSearchClient
+except ImportError:
+    SearXNGSearchClient = None
+
+# Import usage tracking
+from usage_tracker import APIProvider, track_api_call
 
 
 class FirecrawlSearchClient:
@@ -34,6 +44,10 @@ class FirecrawlSearchClient:
         Returns:
             List of search results with title, url, and content
         """
+        start_time = time.time()
+        success = True
+        error_message = None
+
         try:
             # Use Firecrawl's search functionality
             # Add academic site filters to the query for better results
@@ -66,8 +80,25 @@ class FirecrawlSearchClient:
             return processed_results
 
         except Exception as e:
+            success = False
+            error_message = str(e)
             print(f"Search error: {e}")
             return []
+
+        finally:
+            duration = time.time() - start_time
+            track_api_call(
+                provider=APIProvider.FIRECRAWL,
+                endpoint="search",
+                duration=duration,
+                success=success,
+                error_message=error_message,
+                metadata={
+                    "query": query,
+                    "num_results": num_results,
+                    "results_count": len(processed_results) if 'processed_results' in locals() else 0
+                }
+            )
 
     def scrape_url(self, url: str) -> dict[str, str]:
         """
@@ -79,6 +110,11 @@ class FirecrawlSearchClient:
         Returns:
             Dictionary with scraped content
         """
+        start_time = time.time()
+        success = True
+        error_message = None
+        result = None
+
         try:
             result = self.app.scrape_url(
                 url=url,
@@ -100,6 +136,8 @@ class FirecrawlSearchClient:
             }
 
         except Exception as e:
+            success = False
+            error_message = str(e)
             print(f"Scraping error for {url}: {e}")
             return {
                 "title": "Error",
@@ -107,6 +145,17 @@ class FirecrawlSearchClient:
                 "content": f"Failed to scrape: {str(e)}",
                 "source": "firecrawl_scrape",
             }
+
+        finally:
+            duration = time.time() - start_time
+            track_api_call(
+                provider=APIProvider.FIRECRAWL,
+                endpoint="scrape_url",
+                duration=duration,
+                success=success,
+                error_message=error_message,
+                metadata={"url": url, "result_type": type(result).__name__ if result else None}
+            )
 
     def enhanced_citation_search(
         self, citation_text: str, citation_components: dict[str, Any]
@@ -558,18 +607,27 @@ class MockSearchClient:
 
 
 # Factory function for easy import
-def create_search_client(use_mock: bool = False) -> FirecrawlSearchClient:
+def create_search_client(use_mock: bool = False, use_searxng: bool = False):
     """
     Create and return a search client
 
     Args:
         use_mock: If True, return mock client for testing
+        use_searxng: If True, use SearXNG client instead of Firecrawl
 
     Returns:
         Search client instance
     """
     if use_mock:
         return MockSearchClient()
+
+    if use_searxng:
+        try:
+            from .searxng_client import SearXNGSearchClient
+            return SearXNGSearchClient()
+        except Exception as e:
+            print(f"Warning: SearXNG client failed to initialize: {e}")
+            print("Falling back to Firecrawl client")
 
     try:
         return FirecrawlSearchClient()

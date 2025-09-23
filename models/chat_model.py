@@ -1,6 +1,9 @@
 import os
+import time
 
 import dspy
+
+from usage_tracker import APIProvider, track_api_call
 
 
 class ChatSignature(dspy.Signature):
@@ -47,6 +50,12 @@ class ChatModel:
         Returns:
             Assistant's response
         """
+        start_time = time.time()
+        success = True
+        error_message = None
+        tokens_used = 0
+        result = None
+
         try:
             # Format conversation context
             context = ""
@@ -57,10 +66,37 @@ class ChatModel:
             # Generate response
             result = self.chat_chain(context=context, user_message=message)
 
+            # Try to extract token usage
+            try:
+                if hasattr(result, '__dict__') and hasattr(result.__dict__.get('_lm', {}), 'n_tokens'):
+                    tokens_used = result.__dict__['_lm']['n_tokens']
+                elif hasattr(self.lm, 'last_usage'):
+                    tokens_used = self.lm.last_usage.get('total_tokens', 0)
+            except Exception:
+                pass  # Token extraction failed, but call was successful
+
             return result.response
 
         except Exception as e:
-            return f"Error generating response: {str(e)}"
+            success = False
+            error_message = str(e)
+            return f"Error generating response: {error_message}"
+
+        finally:
+            duration = time.time() - start_time
+            track_api_call(
+                provider=APIProvider.OPENROUTER,
+                endpoint="chat_completion",
+                duration=duration,
+                success=success,
+                tokens_used=tokens_used,
+                error_message=error_message,
+                metadata={
+                    "model": self.chat_model_name,
+                    "message_length": len(message),
+                    "history_length": len(history) if history else 0
+                }
+            )
 
     def validate_setup(self) -> bool:
         """Validate that the model is properly configured"""

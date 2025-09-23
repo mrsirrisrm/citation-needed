@@ -1,0 +1,1074 @@
+{
+  "calls": [
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:39:34.305047",
+      "duration": 1.2249658107757568,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:39:34.311288",
+      "duration": 0.003812074661254883,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:39:34.908821",
+      "duration": 0.000743865966796875,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:39:35.197740",
+      "duration": 0.2886021137237549,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 6, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 19s, resets at Tue Sep 23 2025 19:39:53 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:40:27.104770",
+      "duration": 1.1298937797546387,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:40:27.165972",
+      "duration": 0.05940818786621094,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:40:29.027097",
+      "duration": 1.105794906616211,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:40:29.038877",
+      "duration": 0.010809183120727539,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:43:23.876106",
+      "duration": 0.7895922660827637,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:43:23.887602",
+      "duration": 0.007496833801269531,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:43:24.703732",
+      "duration": 0.000797271728515625,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:43:26.126466",
+      "duration": 1.4222960472106934,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:44:43.458015",
+      "duration": 0.8664789199829102,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:44:43.539119",
+      "duration": 0.0767831802368164,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:44:45.125445",
+      "duration": 0.9849588871002197,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:44:45.142066",
+      "duration": 0.014985084533691406,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:44:45.451996",
+      "duration": 0.006016969680786133,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:44:46.673597",
+      "duration": 1.2202601432800293,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:45:13.833155",
+      "duration": 1.0018959045410156,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:45:13.905195",
+      "duration": 0.06801605224609375,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:45:15.537919",
+      "duration": 1.037527084350586,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:45:15.554473",
+      "duration": 0.014821290969848633,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:45:15.847810",
+      "duration": 0.0056149959564208984,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:45:16.150041",
+      "duration": 0.30167603492736816,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 6, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 27s, resets at Tue Sep 23 2025 19:45:42 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:45:30.359758",
+      "duration": 0.3067808151245117,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 7, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 13s, resets at Tue Sep 23 2025 19:45:42 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:45:30.442412",
+      "duration": 0.07611894607543945,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:45:31.331605",
+      "duration": 0.2995941638946533,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 8, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 12s, resets at Tue Sep 23 2025 19:45:42 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:45:31.357524",
+      "duration": 0.02118396759033203,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:45:31.647641",
+      "duration": 0.00558781623840332,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:45:31.946710",
+      "duration": 0.29845309257507324,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 9, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 11s, resets at Tue Sep 23 2025 19:45:42 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:45:43.879358",
+      "duration": 0.7922699451446533,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:45:43.958142",
+      "duration": 0.07241201400756836,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:45:45.690911",
+      "duration": 1.1310112476348877,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 1
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:45:45.710296",
+      "duration": 0.0167388916015625,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:46:39.219479",
+      "duration": 0.3491950035095215,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:46:39.282679",
+      "duration": 0.059954166412353516,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:46:42.016067",
+      "duration": 2.126983880996704,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:46:42.038525",
+      "duration": 0.019073963165283203,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:46:42.342923",
+      "duration": 0.005821943283081055,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:46:42.641012",
+      "duration": 0.2973289489746094,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:46:51.916396",
+      "duration": 0.3006861209869385,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:46:51.980695",
+      "duration": 0.06053519248962402,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:46:52.872070",
+      "duration": 0.29961514472961426,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:46:52.893714",
+      "duration": 0.015249967575073242,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:46:53.182405",
+      "duration": 0.005681753158569336,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:46:53.484263",
+      "duration": 0.30104613304138184,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:47:15.710175",
+      "duration": 0.3052380084991455,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:47:15.723260",
+      "duration": 0.006597995758056641,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:47:16.333706",
+      "duration": 0.0007607936859130859,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:47:16.635884",
+      "duration": 0.3012428283691406,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:49:33.915990",
+      "duration": 0.3009359836578369,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:49:33.930097",
+      "duration": 0.00713801383972168,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:49:34.710356",
+      "duration": 0.0007407665252685547,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:49:35.012749",
+      "duration": 0.3014719486236572,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "test academic paper",
+        "num_results": 1,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:53:49.381324",
+      "duration": 0.002360820770263672,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T07:53:50.154112",
+      "duration": 0.0007328987121582031,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "searxng",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T07:59:16.222176",
+      "duration": 0.01604485511779785,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "SearXNG search failed with status 403",
+      "metadata": {
+        "query": "test",
+        "num_results": 3,
+        "results_count": 0,
+        "engines": [
+          "google",
+          "google_scholar",
+          "arxiv",
+          "pubmed",
+          "crossref",
+          "doaj"
+        ]
+      }
+    },
+    {
+      "provider": "searxng",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T08:00:49.577259",
+      "duration": 0.005889177322387695,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "SearXNG search failed with status 403",
+      "metadata": {
+        "query": "machine learning",
+        "num_results": 3,
+        "results_count": 0,
+        "engines": [
+          "google",
+          "google_scholar",
+          "arxiv",
+          "pubmed",
+          "crossref",
+          "doaj"
+        ]
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:00:56.960219",
+      "duration": 0.04361104965209961,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "searxng",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T08:04:50.778901",
+      "duration": 0.004604816436767578,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "SearXNG search failed with status 403",
+      "metadata": {
+        "query": "machine learning",
+        "num_results": 3,
+        "results_count": 0,
+        "engines": [
+          "google",
+          "google_scholar",
+          "arxiv",
+          "pubmed",
+          "crossref",
+          "doaj"
+        ]
+      }
+    },
+    {
+      "provider": "searxng",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T08:05:14.815432",
+      "duration": 0.0051000118255615234,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "SearXNG search failed with status 403",
+      "metadata": {
+        "query": "machine learning",
+        "num_results": 3,
+        "results_count": 0,
+        "engines": [
+          "google",
+          "google_scholar",
+          "arxiv",
+          "pubmed",
+          "crossref",
+          "doaj"
+        ]
+      }
+    },
+    {
+      "provider": "searxng",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T08:05:36.162541",
+      "duration": 0.012884855270385742,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "SearXNG search failed with status 403",
+      "metadata": {
+        "query": "test",
+        "num_results": 1,
+        "results_count": 0,
+        "engines": [
+          "google",
+          "google_scholar",
+          "arxiv",
+          "pubmed",
+          "crossref",
+          "doaj"
+        ]
+      }
+    },
+    {
+      "provider": "searxng",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T08:11:32.522296",
+      "duration": 0.008543014526367188,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "SearXNG search failed with status 403",
+      "metadata": {
+        "query": "test query",
+        "num_results": 2,
+        "results_count": 0,
+        "engines": [
+          "google",
+          "google_scholar",
+          "arxiv",
+          "pubmed",
+          "crossref",
+          "doaj"
+        ]
+      }
+    },
+    {
+      "provider": "searxng",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T08:13:53.060613",
+      "duration": 1.0475819110870361,
+      "success": true,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "machine learning",
+        "num_results": 3,
+        "results_count": 3,
+        "engines": [
+          "google",
+          "google_scholar",
+          "arxiv",
+          "pubmed",
+          "crossref",
+          "doaj"
+        ]
+      }
+    },
+    {
+      "provider": "searxng",
+      "endpoint": "search",
+      "timestamp": "2025-09-24T08:16:29.884650",
+      "duration": 0.9156479835510254,
+      "success": true,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "query": "machine learning",
+        "num_results": 3,
+        "results_count": 3,
+        "engines": [
+          "google",
+          "google_scholar",
+          "arxiv",
+          "pubmed",
+          "crossref",
+          "doaj"
+        ]
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:16:40.748857",
+      "duration": 0.009859085083007812,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:16:41.549436",
+      "duration": 0.00080108642578125,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    }
+  ],
+  "last_updated": "2025-09-24T08:16:41.549777"
+}

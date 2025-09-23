@@ -1,0 +1,5 @@
+timestamp,provider,endpoint,duration,success,cost_usd,tokens_used,error_message
+2025-09-23T22:20:54.995915,openrouter,chat_completion,1.5,True,0.000375,250,
+2025-09-23T22:20:54.996080,firecrawl,search,2.3,True,0.01,0,
+2025-09-23T22:20:54.996186,searxng,search,0.8,True,0.0,0,
+2025-09-23T22:20:54.996267,firecrawl,scrape_url,5.0,False,0.0,0,Timeout
