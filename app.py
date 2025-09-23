@@ -158,26 +158,128 @@ def create_interface():
     except Exception as e:
         print(f"Could not load CSS: {e}")
 
+    # Load custom JavaScript
+    js_path = os.path.join(os.path.dirname(__file__), "ui", "citation_handlers.js")
+    custom_js = ""
+    try:
+        with open(js_path) as f:
+            js_content = f.read()
+        print(f"✅ Loaded JavaScript from {js_path}")
+        # Wrap the JavaScript in a function for Gradio's js parameter
+        custom_js = f"""
+        () => {{
+            {js_content}
+        }}
+        """
+    except Exception as e:
+        print(f"Could not load JavaScript: {e}")
+        # Fallback to inline JS if file loading fails
+        custom_js = """
+        () => {
+            console.log('🚀 Citation Needed: JavaScript loaded inline');
+            window.citationDebug = function() {
+                console.log('🔍 Debug info:', { location: window.location.href });
+            };
+            window.citationDebug();
+        }
+        """
+
+    # Add additional CSS for better panel layout
+    additional_css = """
+    /* Ensure fact-check panel has adequate width and height */
+    .gradio-container .gradio-row .gradio-column:last-child {
+        min-width: 400px !important;
+    }
+
+    /* Make sure HTML components fill their containers */
+    .gradio-html {
+        height: 100%;
+    }
+
+    /* Improve scrolling for long content */
+    .fact-check-panel {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Citation interaction styles */
+    .active-highlight {
+        box-shadow: 0 0 0 2px #2196F3;
+        z-index: 10;
+        position: relative;
+    }
+
+    .comment-content {
+        display: none;
+        padding: 12px;
+        border-top: 1px solid rgba(128, 128, 128, 0.2);
+    }
+
+    .expand-icon {
+        transition: transform 0.2s ease;
+        font-size: 14px;
+        user-select: none;
+    }
+
+    .expand-icon.expanded {
+        transform: rotate(180deg);
+    }
+
+    .comment-header {
+        cursor: pointer;
+    }
+
+    .comment-header:hover {
+        background: rgba(128, 128, 128, 0.05);
+    }
+    """
+
+    custom_css += additional_css
+
+    # Create head content for additional script loading if needed
+    head_content = """
+    <script>
+    console.log('🚀 Citation Needed: Head script executing');
+    </script>
+    """
+
     with gr.Blocks(
         title="Citation Needed",
-        css=custom_css
+        css=custom_css,
+        head=head_content,
+        js=custom_js
     ) as interface:
+        # Debug info component to verify JS is loading
+        gr.HTML("""
+        <div style="display: none;" id="js-debug-info">
+            <script>
+            console.log('🚀 Citation Needed: Interface HTML component loaded');
+
+            // Verify that our functions are available
+            setTimeout(function() {
+                console.log('🔍 Citation system check:', {
+                    toggleComment: typeof window.toggleComment,
+                    highlightCitation: typeof window.highlightCitation,
+                    citationDebug: typeof window.citationDebug,
+                    citationElements: document.querySelectorAll('.citation-comment').length,
+                    highlightElements: document.querySelectorAll('.citation-highlight').length
+                });
+
+                // Auto-run debug if available
+                if (typeof window.citationDebug === 'function') {
+                    window.citationDebug();
+                }
+            }, 1000);
+            </script>
+        </div>
+        """, visible=False)
+
         gr.Markdown("# Citation Needed")
         gr.Markdown("Chat with AI and get automatic fact-checking of academic citations")
 
-        # System status
-        with gr.Row():
-            gr.Markdown(f"""
-            **System Status:**
-            - Chat Model: {"✓" if app.chat_model and app.chat_model.validate_setup() else "✗"}
-            - Citation NER: {"✓" if app.ner_extractor and app.ner_extractor.validate_setup() else "✗"}
-            - Fact Checker: {"✓" if app.fact_checker and app.fact_checker.validate_setup() else "✗"}
-            - Search Client: {"✓" if app.search_client and app.search_client.validate_setup() else "✗"}
-            """)
-
         with gr.Row():
             # Main chat area (left side)
-            with gr.Column(scale=3):
+            with gr.Column(scale=2):
                 chatbot = gr.Chatbot(
                     label="Chat",
                     height=600,
@@ -244,4 +346,9 @@ if __name__ == "__main__":
 
     # Create and launch interface
     interface = create_interface()
-    interface.launch(server_name="0.0.0.0", server_port=7860, show_error=True)
+    interface.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        show_error=True,
+        debug=True  # Enable debug mode for better development
+    )

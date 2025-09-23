@@ -147,14 +147,14 @@ def _create_citation_comment(citation_id: str, result: FactCheckResult) -> str:
 
     comment_html = f"""
     <div class="citation-comment" data-citation-id="{citation_id}">
-        <div class="comment-header" onclick="toggleComment('{citation_id}')">
+        <div class="comment-header">
             <div class="comment-citation-text">{html.escape(citation_display)}</div>
             <div class="comment-status">
                 <span class="status-badge {status_class}">{status_display}</span>
                 <span class="expand-icon" id="icon_{citation_id}">▼</span>
             </div>
         </div>
-        <div class="comment-content" id="content_{citation_id}">
+        <div class="comment-content" id="content_{citation_id}" style="display: none;">
             <div class="comment-explanation">
                 {html.escape(result.explanation)}
             </div>
@@ -202,69 +202,8 @@ def create_loading_panel() -> str:
 
 
 def create_javascript_components() -> str:
-    """Create JavaScript for interactive components"""
-    return """
-    <script>
-    function toggleComment(citationId) {
-        const content = document.getElementById('content_' + citationId);
-        const icon = document.getElementById('icon_' + citationId);
-
-        if (content.classList.contains('expanded')) {
-            content.classList.remove('expanded');
-            icon.classList.remove('expanded');
-            icon.textContent = '▼';
-        } else {
-            content.classList.add('expanded');
-            icon.classList.add('expanded');
-            icon.textContent = '▲';
-        }
-    }
-
-    function highlightCitation(citationId) {
-        // Remove previous highlights
-        document.querySelectorAll('.citation-highlight').forEach(el => {
-            el.classList.remove('active-highlight');
-        });
-
-        // Highlight selected citation
-        const citation = document.getElementById(citationId);
-        if (citation) {
-            citation.classList.add('active-highlight');
-            citation.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    }
-
-    // Add click handlers to citations
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.citation-highlight').forEach(el => {
-            el.addEventListener('click', function() {
-                const citationId = this.getAttribute('data-citation-id');
-                highlightCitation(citationId);
-
-                // Scroll to corresponding comment
-                const comment = document.querySelector(`[data-citation-id="${citationId}"]`);
-                if (comment) {
-                    comment.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-                    // Expand comment if not already expanded
-                    const content = document.getElementById('content_' + citationId);
-                    if (content && !content.classList.contains('expanded')) {
-                        toggleComment(citationId);
-                    }
-                }
-            });
-        });
-    });
-    </script>
-
-    <style>
-    .active-highlight {
-        box-shadow: 0 0 0 2px #2196F3;
-        z-index: 10;
-        position: relative;
-    }
-    </style>
-    """
+    """Create JavaScript for interactive components - now minimal since JS is in main CSS"""
+    return ""
 
 
 def format_message_with_citations(
