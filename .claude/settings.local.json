@@ -7,7 +7,10 @@
       "Bash(ruff check:*)",
       "Bash(ruff format:*)",
       "Bash(python:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(PYTHONPATH=. python tests/test_ner.py)",
+      "Bash(PYTHONPATH=. python -c:*)",
+      "Bash(PYTHONPATH=. python run_tests.py ner)"
     ],
     "deny": [],
     "ask": []
