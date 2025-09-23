@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test runner for Citation Fact-Checker
+Test runner for Citation Needed
 """
 import sys
 import subprocess
@@ -13,7 +13,7 @@ load_dotenv()
 
 def run_test_suite():
     """Run the complete test suite"""
-    print("🧪 Citation Fact-Checker Test Suite")
+    print("🧪 Citation Needed Test Suite")
     print("=" * 50)
 
     # Check if we have API keys for extended tests
@@ -70,7 +70,7 @@ def run_test_suite():
     if all_passed:
         print("🎉 ALL TESTS PASSED!")
         print()
-        print("Your Citation Fact-Checker is ready to use!")
+        print("Your Citation Needed is ready to use!")
         if not has_openrouter:
             print("ℹ  Add OPENROUTER_API_KEY to .env for full functionality")
         if not has_firecrawl:

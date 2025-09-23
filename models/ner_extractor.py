@@ -36,6 +36,10 @@ class AcademicNER:
 
         # Academic citation patterns
         self.citation_patterns = [
+            # Full citation with quotes: "Title" by Author et al. (Year) [Link](URL)
+            r'"[^"]+" by [^[]+\[Link\]\([^)]+\)',
+            # Citation with title and authors: "Title" by Authors et al. (Year)
+            r'"[^"]+" by [^.]+\.\s*(?:\([^)]+\))?',
             # Author-year format: (Smith et al., 2023)
             r"\([^()]*(?:et al\.?|&|and)[^()]*, ?\d{4}[a-z]?\)",
             # Simpler author-year: (Smith et al. 2023)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Integration tests for the Citation Fact-Checker system
+Integration tests for the Citation Needed system
 """
 import pytest
 import os
@@ -248,7 +248,7 @@ if __name__ == "__main__":
     test_class = TestIntegration()
     test_class.setup_method()
 
-    print("Running Citation Fact-Checker Integration Tests...")
+    print("Running Citation Needed Integration Tests...")
     print("=" * 60)
 
     # Run tests

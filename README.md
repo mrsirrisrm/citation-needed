@@ -1,4 +1,4 @@
-# Citation Fact-Checker
+# Citation Needed
 
 A Gradio-based chat interface with integrated fact-checking system for academic citations. Features a large language model (GPT-4) for chat and a smaller model (GPT-3.5) for fact-checking citations using spaCy NER and Firecrawl search.
 

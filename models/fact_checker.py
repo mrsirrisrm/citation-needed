@@ -1,10 +1,12 @@
 import os
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, List
+import json
 
 import dspy
 
 from .ner_extractor import Citation
+from .citation_parser import StructuredCitation, create_citation_parser
 
 
 @dataclass
@@ -71,6 +73,14 @@ class FactChecker:
             self.citation_analyzer = dspy.ChainOfThought(AnalyzeCitationSignature)
             self.source_verifier = dspy.ChainOfThought(VerifySourceSignature)
 
+        # Initialize structured citation parser
+        try:
+            self.citation_parser = create_citation_parser()
+            print("✅ Structured citation parser initialized")
+        except Exception as e:
+            print(f"⚠️  Citation parser initialization failed: {e}")
+            self.citation_parser = None
+
     def fact_check_citations(self, citations: list[Citation]) -> list[FactCheckResult]:
         """
         Fact-check a list of citations
@@ -104,16 +114,52 @@ class FactChecker:
     def _fact_check_single_citation(self, citation: Citation) -> FactCheckResult:
         """Fact-check a single citation"""
 
-        # Step 1: Generate search queries
-        search_queries = self._generate_search_queries(citation)
+        print(f"🔍 Fact-checking citation: {citation.text[:80]}...")
 
-        # Step 2: Search for sources (if search client available)
+        # Step 1: Parse citation into structured format (if parser available)
+        structured_citation = None
+        if self.citation_parser:
+            try:
+                structured_citation = self.citation_parser.parse_citation(citation.text)
+                print(f"📋 Parsed citation: {structured_citation.first_author} ({structured_citation.year}) - {structured_citation.title[:50]}...")
+                print(f"📊 Extraction method: {structured_citation.extraction_method}, confidence: {structured_citation.confidence:.2f}")
+            except Exception as e:
+                print(f"⚠️  Structured parsing failed: {e}")
+
+        # Step 2: Search for sources using enhanced strategy
         sources_found = []
-        if self.search_client and search_queries:
-            sources_found = self._search_for_sources(search_queries)
+        if self.search_client:
+            if structured_citation:
+                # Use smart search with structured citation
+                if hasattr(self.search_client, 'smart_citation_search'):
+                    sources_found = self.search_client.smart_citation_search(structured_citation, citation.text)
+                else:
+                    # Fallback to enhanced search
+                    citation_dict = {
+                        "authors": structured_citation.authors,
+                        "first_author": structured_citation.first_author,
+                        "title": structured_citation.title,
+                        "year": structured_citation.year,
+                        "journal": structured_citation.journal,
+                        "doi": structured_citation.doi,
+                        "arxiv_id": structured_citation.arxiv_id,
+                        "pmid": structured_citation.pmid,
+                    }
+                    sources_found = self.search_client.enhanced_citation_search(citation.text, citation_dict)
+            else:
+                # Fallback to old method
+                search_queries = self._generate_search_queries(citation)
+                if search_queries:
+                    sources_found = self._search_for_sources(search_queries)
 
         # Step 3: Verify against found sources
-        verification_result = self._verify_citation(citation, sources_found)
+        verification_result = self._verify_citation_enhanced(citation, sources_found, structured_citation)
+
+        # Generate search queries for logging
+        if structured_citation:
+            search_queries = self.citation_parser.generate_search_queries(structured_citation)
+        else:
+            search_queries = self._generate_search_queries(citation)
 
         return FactCheckResult(
             citation=citation,
@@ -180,8 +226,129 @@ class FactChecker:
 
         return unique_sources[:5]  # Return top 5 unique sources
 
+    def _verify_citation_enhanced(
+        self, citation: Citation, sources: list[dict[str, str]], structured_citation: StructuredCitation = None
+    ) -> dict[str, Any]:
+        """Verify citation against found sources with enhanced matching"""
+
+        if not sources:
+            return {
+                "status": "not_found",
+                "confidence": 0.8,
+                "explanation": "No sources found to verify this citation.",
+            }
+
+        print(f"🔍 Verifying against {len(sources)} sources...")
+
+        # Check for high-confidence direct validations
+        direct_validations = [s for s in sources if s.get("confidence", 0) > 0.9]
+        if direct_validations:
+            best_validation = max(direct_validations, key=lambda x: x.get("confidence", 0))
+            source_type = best_validation.get("metadata", {}).get("type", "unknown")
+            return {
+                "status": "verified",
+                "confidence": best_validation.get("confidence", 0.95),
+                "explanation": f"Direct validation via {source_type}: {best_validation.get('title', 'Source found')}",
+            }
+
+        # Enhanced verification with structured citation data
+        if structured_citation:
+            verification_result = self._verify_with_structured_data(structured_citation, sources)
+            if verification_result["confidence"] > 0.7:
+                return verification_result
+
+        # Fallback to LLM verification
+        return self._verify_citation(citation, sources)
+
+    def _verify_with_structured_data(
+        self, structured_citation: StructuredCitation, sources: list[dict[str, str]]
+    ) -> dict[str, Any]:
+        """Verify citation using structured data and enhanced matching"""
+
+        best_match = None
+        best_score = 0.0
+
+        for source in sources:
+            score = self._calculate_match_score(structured_citation, source)
+            if score > best_score:
+                best_score = score
+                best_match = source
+
+        if best_score > 0.7:  # Good match threshold
+            return {
+                "status": "verified",
+                "confidence": min(0.9, best_score + 0.1),  # Boost confidence slightly
+                "explanation": f"Matched source: {best_match.get('title', 'Unknown')} (score: {best_score:.2f})",
+            }
+        elif best_score > 0.4:  # Partial match
+            return {
+                "status": "partial",
+                "confidence": best_score,
+                "explanation": f"Partial match with: {best_match.get('title', 'Unknown')} (score: {best_score:.2f})",
+            }
+        else:
+            return {
+                "status": "not_found",
+                "confidence": 0.6,
+                "explanation": "No strong matches found in search results",
+            }
+
+    def _calculate_match_score(self, structured_citation: StructuredCitation, source: dict[str, str]) -> float:
+        """Calculate match score between structured citation and source"""
+
+        score = 0.0
+        max_score = 0.0
+
+        # Title matching (highest weight)
+        if structured_citation.title:
+            max_score += 0.4
+            source_title = source.get("title", "").lower()
+            citation_title = structured_citation.title.lower()
+
+            # Exact title match
+            if citation_title == source_title:
+                score += 0.4
+            # Partial title match
+            elif citation_title in source_title or source_title in citation_title:
+                score += 0.25
+            # Word overlap
+            else:
+                title_words = set(citation_title.split())
+                source_words = set(source_title.split())
+                overlap = len(title_words.intersection(source_words))
+                if overlap > 0:
+                    score += min(0.3, overlap / len(title_words) * 0.4)
+
+        # Author matching
+        if structured_citation.first_author:
+            max_score += 0.3
+            source_content = source.get("content", "").lower()
+            author_name = structured_citation.first_author.lower()
+
+            if author_name in source_content:
+                score += 0.3
+
+        # Year matching
+        if structured_citation.year:
+            max_score += 0.2
+            if structured_citation.year in source.get("content", ""):
+                score += 0.2
+
+        # Journal/conference matching
+        if structured_citation.journal:
+            max_score += 0.1
+            journal_lower = structured_citation.journal.lower()
+            if journal_lower in source.get("content", "").lower():
+                score += 0.1
+
+        # Boost score based on source confidence
+        source_confidence = source.get("confidence", 0.5)
+        score *= (0.5 + source_confidence * 0.5)  # Scale by source reliability
+
+        return score / max_score if max_score > 0 else 0.0
+
     def _verify_citation(self, citation: Citation, sources: list[dict[str, str]]) -> dict[str, Any]:
-        """Verify citation against found sources"""
+        """Verify citation against found sources (original method)"""
 
         if not sources:
             return {
