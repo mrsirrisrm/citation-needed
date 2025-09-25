@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Chat, FactCheckPanel, SystemStatusPanel } from './components';
+import { Chat, FactCheckPanel, SystemStatusPanel, UsageStatsPanel } from './components';
 import {
   type ChatMessage,
   type ChatRequest,
@@ -271,9 +271,9 @@ function App() {
                   />
                 )}
 
-                {activeTab === 'usage' && systemStatus && (
+                {activeTab === 'usage' && usageStats && (
                   <div className="p-4">
-                    <SystemStatusPanel status={systemStatus} usageStats={usageStats} />
+                    <UsageStatsPanel usageStats={usageStats} />
                   </div>
                 )}
 
