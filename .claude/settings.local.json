@@ -24,7 +24,11 @@
       "Bash(xargs kill:*)",
       "Bash(git rm:*)",
       "Bash(sg:*)",
-      "Bash(ast-grep:*)"
+      "Bash(ast-grep:*)",
+      "Bash(kill:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_take_screenshot"
     ],
     "deny": [],
     "ask": []
