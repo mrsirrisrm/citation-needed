@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Chat, FactCheckPanel, SystemStatusPanel } from './components';
 import {
-  ChatMessage,
-  ChatRequest,
-  ChatResponse,
-  FactCheckResult,
-  TaskStatus,
-  SystemStatus,
-  UsageStats,
+  type ChatMessage,
+  type ChatRequest,
+  type ChatResponse,
+  type FactCheckResult,
+  type TaskStatus,
+  type SystemStatus,
+  type UsageStats,
   chatApi,
   TaskPoller
 } from './services/api';

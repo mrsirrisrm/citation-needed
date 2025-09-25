@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, ExternalLink, Search, CheckCircle, XCircle, AlertTriangle, Clock } from 'lucide-react';
-import { FactCheckResult, Source, TaskStatus } from '../services/api';
+import { type FactCheckResult, type TaskStatus } from '../services/api';
 import { getStatusClass, getStatusDisplay, escapeHtml } from '../services/api';
 
 interface FactCheckPanelProps {

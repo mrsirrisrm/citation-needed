@@ -2,15 +2,13 @@ import React from 'react';
 import {
   CheckCircle,
   XCircle,
-  AlertTriangle,
   Activity,
-  Database,
   Bot,
   Search,
   Zap,
   BarChart3
 } from 'lucide-react';
-import { SystemStatus, UsageStats } from '../services/api';
+import { type SystemStatus, type UsageStats } from '../services/api';
 
 interface SystemStatusPanelProps {
   status: SystemStatus;

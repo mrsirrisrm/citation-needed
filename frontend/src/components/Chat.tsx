@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2 } from 'lucide-react';
-import { ChatMessage, Citation, FactCheckResult } from '../services/api';
-import { highlightCitations } from '../services/api';
+import { type ChatMessage, type Citation, type FactCheckResult, highlightCitations } from '../services/api';
 
 interface ChatProps {
   messages: ChatMessage[];
