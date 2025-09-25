@@ -158,46 +158,51 @@ function App() {
 
   if (isInitializing) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary-500" />
-          <p className="text-gray-600 dark:text-gray-400">Initializing Citation Needed...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <div className="text-center bg-white rounded-2xl p-8 shadow-xl">
+          <div className="p-4 bg-primary-50 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+            <Loader2 className="w-10 h-10 animate-spin text-primary-500" />
+          </div>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">Starting up...</h2>
+          <p className="text-slate-600">Initializing Citation Needed components</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Modern Header */}
+      <header className="header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <MessageSquare className="w-8 h-8 text-primary-500" />
+            <div className="flex items-center space-x-4">
+              <div className="p-2 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
+                <MessageSquare className="w-8 h-8 text-white" />
+              </div>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h1 className="text-2xl font-bold text-white">
                   Citation Needed
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Chat with AI and get automatic fact-checking
+                <p className="text-primary-100 text-sm font-medium">
+                  AI Chat with Intelligent Fact-Checking
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
               <button
                 onClick={handleClear}
-                className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="btn btn-secondary text-slate-700 bg-white bg-opacity-90 hover:bg-opacity-100"
               >
                 Clear Chat
               </button>
               <button
                 onClick={handleRefreshStats}
-                className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-all duration-200"
                 title="Refresh statistics"
               >
-                <Loader2 className="w-4 h-4" />
+                <Loader2 className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -205,10 +210,10 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto h-[calc(100vh-4rem)]">
-        <div className="flex h-full">
+      <div className="max-w-7xl mx-auto h-[calc(100vh-7rem)] p-2">
+        <div className="main-layout">
           {/* Chat Area (2/3 width) */}
-          <div className="flex-1 min-w-0">
+          <div className="chat-area">
             <Chat
               messages={messages}
               onSendMessage={handleSendMessage}
@@ -218,40 +223,28 @@ function App() {
           </div>
 
           {/* Side Panel (1/3 width) */}
-          <div className="w-96 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="side-panel">
             <div className="h-full flex flex-col">
-              {/* Tabs */}
-              <div className="border-b border-gray-200 dark:border-gray-700">
+              {/* Modern Tabs */}
+              <div className="tabs">
                 <nav className="flex -mb-px">
                   <button
                     onClick={() => setActiveTab('fact-check')}
-                    className={`flex-1 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                      activeTab === 'fact-check'
-                        ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                        : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                    }`}
+                    className={`tab-button ${activeTab === 'fact-check' ? 'active' : ''}`}
                   >
                     <MessageSquare className="w-4 h-4 inline mr-2" />
                     Fact-Check
                   </button>
                   <button
                     onClick={() => setActiveTab('usage')}
-                    className={`flex-1 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                      activeTab === 'usage'
-                        ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                        : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                    }`}
+                    className={`tab-button ${activeTab === 'usage' ? 'active' : ''}`}
                   >
                     <BarChart3 className="w-4 h-4 inline mr-2" />
                     Usage
                   </button>
                   <button
                     onClick={() => setActiveTab('status')}
-                    className={`flex-1 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                      activeTab === 'status'
-                        ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                        : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                    }`}
+                    className={`tab-button ${activeTab === 'status' ? 'active' : ''}`}
                   >
                     <Settings className="w-4 h-4 inline mr-2" />
                     Status
@@ -260,7 +253,7 @@ function App() {
               </div>
 
               {/* Tab Content */}
-              <div className="flex-1 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto scrollbar-thin">
                 {activeTab === 'fact-check' && (
                   <FactCheckPanel
                     taskId={currentTaskId}
@@ -272,13 +265,13 @@ function App() {
                 )}
 
                 {activeTab === 'usage' && usageStats && (
-                  <div className="p-4">
+                  <div className="p-6">
                     <UsageStatsPanel usageStats={usageStats} />
                   </div>
                 )}
 
                 {activeTab === 'status' && systemStatus && (
-                  <div className="p-4">
+                  <div className="p-6">
                     <SystemStatusPanel status={systemStatus} />
                   </div>
                 )}
