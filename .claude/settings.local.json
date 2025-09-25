@@ -17,7 +17,12 @@
       "Bash(pkill:*)",
       "Bash(docker logs:*)",
       "Bash(docker stop:*)",
-      "Bash(docker:*)"
+      "Bash(docker:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx tsc:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []
