@@ -30,7 +30,9 @@ class SearXNGSearchClient:
             response = requests.get(f"{self.searxng_url}/config", timeout=10)
             if response.status_code == 200:
                 config = response.json()
-                print(f"✅ SearXNG instance validated: {config.get('brand', {}).get('NAME', 'SearXNG')}")
+                print(
+                    f"✅ SearXNG instance validated: {config.get('brand', {}).get('NAME', 'SearXNG')}"
+                )
                 return True
             return False
         except Exception as e:
@@ -56,31 +58,28 @@ class SearXNGSearchClient:
         try:
             # Prepare search parameters - use HTML instead of JSON to avoid bot detection
             search_params = {
-                'q': query,
-                'engines': ['google', 'google_scholar', 'arxiv', 'pubmed', 'crossref', 'doaj'],
-                'time_range': None,  # No time restriction
-                'safesearch': 0,  # No safe search restriction
-                'language': 'en',
-                'pageno': 1
+                "q": query,
+                "engines": ["google", "google_scholar", "arxiv", "pubmed", "crossref", "doaj"],
+                "time_range": None,  # No time restriction
+                "safesearch": 0,  # No safe search restriction
+                "language": "en",
+                "pageno": 1,
             }
 
             # Make the search request with proper headers to avoid bot detection
             headers = {
-                'User-Agent': 'Mozilla/5.0 (compatible; Citation-Needed/1.0)',
-                'Accept': 'application/json, text/javascript, */*',
-                'Accept-Language': 'en-US,en;q=0.9',
-                'Accept-Encoding': 'gzip, deflate',
-                'Connection': 'keep-alive',
-                'Upgrade-Insecure-Requests': '1',
-                'X-Forwarded-For': '127.0.0.1',
-                'X-Real-IP': '127.0.0.1'
+                "User-Agent": "Mozilla/5.0 (compatible; Citation-Needed/1.0)",
+                "Accept": "application/json, text/javascript, */*",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Accept-Encoding": "gzip, deflate",
+                "Connection": "keep-alive",
+                "Upgrade-Insecure-Requests": "1",
+                "X-Forwarded-For": "127.0.0.1",
+                "X-Real-IP": "127.0.0.1",
             }
 
             response = requests.get(
-                f"{self.searxng_url}/search",
-                params=search_params,
-                headers=headers,
-                timeout=30
+                f"{self.searxng_url}/search", params=search_params, headers=headers, timeout=30
             )
 
             if response.status_code != 200:
@@ -92,22 +91,23 @@ class SearXNGSearchClient:
             # Parse HTML results instead of JSON
             try:
                 from bs4 import BeautifulSoup
-                soup = BeautifulSoup(response.content, 'html.parser')
+
+                soup = BeautifulSoup(response.content, "html.parser")
 
                 # Find all result elements
-                result_elements = soup.select('.result')
+                result_elements = soup.select(".result")
 
                 for result_elem in result_elements[:num_results]:
                     # Extract title
-                    title_elem = result_elem.select_one('h3 a, .result_title a')
+                    title_elem = result_elem.select_one("h3 a, .result_title a")
                     title = title_elem.get_text(strip=True) if title_elem else "No title"
 
                     # Extract URL
-                    url = title_elem.get('href', '') if title_elem else ''
+                    url = title_elem.get("href", "") if title_elem else ""
 
                     # Extract content/description
-                    content_elem = result_elem.select_one('.result-content, .content, .description')
-                    content = content_elem.get_text(strip=True) if content_elem else ''
+                    content_elem = result_elem.select_one(".result-content, .content, .description")
+                    content = content_elem.get_text(strip=True) if content_elem else ""
 
                     if len(content) > 1000:
                         content = content[:1000] + "..."
@@ -117,11 +117,8 @@ class SearXNGSearchClient:
                         "url": url,
                         "content": content,
                         "source": "searxng_html",
-                        "metadata": {
-                            "engine": "html_parser",
-                            "type": "general"
-                        },
-                        "confidence": 0.7
+                        "metadata": {"engine": "html_parser", "type": "general"},
+                        "confidence": 0.7,
                     }
 
                     results.append(processed_result)
@@ -137,8 +134,8 @@ class SearXNGSearchClient:
                 matches = re.findall(result_pattern, response.text, re.DOTALL)
 
                 for url, title, content in matches[:num_results]:
-                    title = re.sub(r'<[^>]+>', '', title).strip()
-                    content = re.sub(r'<[^>]+>', '', content).strip()
+                    title = re.sub(r"<[^>]+>", "", title).strip()
+                    content = re.sub(r"<[^>]+>", "", content).strip()
 
                     if len(content) > 1000:
                         content = content[:1000] + "..."
@@ -148,11 +145,8 @@ class SearXNGSearchClient:
                         "url": url,
                         "content": content,
                         "source": "searxng_html_fallback",
-                        "metadata": {
-                            "engine": "regex_parser",
-                            "type": "general"
-                        },
-                        "confidence": 0.6
+                        "metadata": {"engine": "regex_parser", "type": "general"},
+                        "confidence": 0.6,
                     }
 
                     results.append(processed_result)
@@ -178,8 +172,8 @@ class SearXNGSearchClient:
                     "query": query,
                     "num_results": num_results,
                     "results_count": len(results),
-                    "engines": ['google', 'google_scholar', 'arxiv', 'pubmed', 'crossref', 'doaj']
-                }
+                    "engines": ["google", "google_scholar", "arxiv", "pubmed", "crossref", "doaj"],
+                },
             )
 
     def _calculate_searxng_confidence(self, result: dict[str, Any]) -> float:
@@ -187,22 +181,31 @@ class SearXNGSearchClient:
         confidence = 0.5  # Base confidence
 
         # Boost for academic engines
-        engine = result.get('engine', '')
-        if engine in ['google_scholar', 'arxiv', 'pubmed', 'crossref', 'doaj']:
+        engine = result.get("engine", "")
+        if engine in ["google_scholar", "arxiv", "pubmed", "crossref", "doaj"]:
             confidence += 0.3
 
         # Boost for content quality
-        content = result.get('content', '') or result.get('snippet', '') or result.get('abstract', '')
+        content = (
+            result.get("content", "") or result.get("snippet", "") or result.get("abstract", "")
+        )
         if len(content) > 100:
             confidence += 0.1
 
         # Boost for published papers
-        if result.get('publishedDate'):
+        if result.get("publishedDate"):
             confidence += 0.1
 
         # Boost for academic domains
-        url = result.get('url', '')
-        academic_domains = ['.edu', '.ac.', '.gov', 'arxiv.org', 'pubmed.ncbi.nlm.nih.gov', 'doi.org']
+        url = result.get("url", "")
+        academic_domains = [
+            ".edu",
+            ".ac.",
+            ".gov",
+            "arxiv.org",
+            "pubmed.ncbi.nlm.nih.gov",
+            "doi.org",
+        ]
         if any(domain in url for domain in academic_domains):
             confidence += 0.2
 
@@ -220,36 +223,40 @@ class SearXNGSearchClient:
             List of academic search results
         """
         # Enhance query for academic search
-        academic_engines = ['google_scholar', 'arxiv', 'pubmed', 'crossref', 'doaj', 'semanticscholar']
+        academic_engines = [
+            "google_scholar",
+            "arxiv",
+            "pubmed",
+            "crossref",
+            "doaj",
+            "semanticscholar",
+        ]
 
         search_params = {
-            'q': query,
-            'engines': academic_engines,
-            'format': 'json',
-            'time_range': None,
-            'safesearch': 0,
-            'language': 'en',
-            'pageno': 1
+            "q": query,
+            "engines": academic_engines,
+            "format": "json",
+            "time_range": None,
+            "safesearch": 0,
+            "language": "en",
+            "pageno": 1,
         }
 
         try:
             # Make the search request with proper headers to avoid bot detection
             headers = {
-                'User-Agent': 'Mozilla/5.0 (compatible; Citation-Needed/1.0)',
-                'Accept': 'application/json, text/javascript, */*',
-                'Accept-Language': 'en-US,en;q=0.9',
-                'Accept-Encoding': 'gzip, deflate',
-                'Connection': 'keep-alive',
-                'Upgrade-Insecure-Requests': '1',
-                'X-Forwarded-For': '127.0.0.1',
-                'X-Real-IP': '127.0.0.1'
+                "User-Agent": "Mozilla/5.0 (compatible; Citation-Needed/1.0)",
+                "Accept": "application/json, text/javascript, */*",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Accept-Encoding": "gzip, deflate",
+                "Connection": "keep-alive",
+                "Upgrade-Insecure-Requests": "1",
+                "X-Forwarded-For": "127.0.0.1",
+                "X-Real-IP": "127.0.0.1",
             }
 
             response = requests.get(
-                f"{self.searxng_url}/search",
-                params=search_params,
-                headers=headers,
-                timeout=30
+                f"{self.searxng_url}/search", params=search_params, headers=headers, timeout=30
             )
 
             if response.status_code != 200:
@@ -258,22 +265,26 @@ class SearXNGSearchClient:
             data = response.json()
             results = []
 
-            for result in data.get('results', [])[:num_results]:
-                content = result.get('content', '') or result.get('snippet', '') or result.get('abstract', '')
+            for result in data.get("results", [])[:num_results]:
+                content = (
+                    result.get("content", "")
+                    or result.get("snippet", "")
+                    or result.get("abstract", "")
+                )
                 if len(content) > 1000:
                     content = content[:1000] + "..."
 
                 processed_result = {
-                    "title": result.get('title', 'No title'),
-                    "url": result.get('url', ''),
+                    "title": result.get("title", "No title"),
+                    "url": result.get("url", ""),
                     "content": content,
                     "source": "searxng_academic",
                     "metadata": {
-                        "engine": result.get('engine', 'unknown'),
-                        "publishedDate": result.get('publishedDate'),
-                        "type": "academic"
+                        "engine": result.get("engine", "unknown"),
+                        "publishedDate": result.get("publishedDate"),
+                        "type": "academic",
                     },
-                    "confidence": 0.7  # Higher base confidence for academic search
+                    "confidence": 0.7,  # Higher base confidence for academic search
                 }
 
                 results.append(processed_result)
@@ -297,25 +308,18 @@ class SearXNGSearchClient:
         """
         try:
             # Check if SearXNG has scraping capability
-            scrape_params = {
-                'url': url,
-                'format': 'json'
-            }
+            scrape_params = {"url": url, "format": "json"}
 
-            response = requests.get(
-                f"{self.searxng_url}/scrape",
-                params=scrape_params,
-                timeout=30
-            )
+            response = requests.get(f"{self.searxng_url}/scrape", params=scrape_params, timeout=30)
 
             if response.status_code == 200:
                 data = response.json()
                 return {
-                    "title": data.get('title', url),
+                    "title": data.get("title", url),
                     "url": url,
-                    "content": data.get('content', ''),
+                    "content": data.get("content", ""),
                     "source": "searxng_scrape",
-                    "confidence": 0.8
+                    "confidence": 0.8,
                 }
 
         except Exception as e:
@@ -324,8 +328,8 @@ class SearXNGSearchClient:
         # Fallback to basic HTTP request if SearXNG scraping fails
         try:
             headers = {
-                'User-Agent': 'Mozilla/5.0 (compatible; Citation-Needed/1.0)',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                "User-Agent": "Mozilla/5.0 (compatible; Citation-Needed/1.0)",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             }
 
             response = requests.get(url, headers=headers, timeout=15)
@@ -333,14 +337,15 @@ class SearXNGSearchClient:
                 # Simple content extraction (could be improved with proper parsing)
                 try:
                     from bs4 import BeautifulSoup
-                    soup = BeautifulSoup(response.content, 'html.parser')
+
+                    soup = BeautifulSoup(response.content, "html.parser")
 
                     # Remove script and style elements
                     for script in soup(["script", "style"]):
                         script.decompose()
 
                     content = soup.get_text()
-                    content = ' '.join(content.split())  # Normalize whitespace
+                    content = " ".join(content.split())  # Normalize whitespace
 
                     if len(content) > 2000:
                         content = content[:2000] + "..."
@@ -350,12 +355,12 @@ class SearXNGSearchClient:
                         "url": url,
                         "content": content,
                         "source": "searxng_fallback",
-                        "confidence": 0.6
+                        "confidence": 0.6,
                     }
                 except ImportError:
                     # Fallback without BeautifulSoup
                     content = response.text
-                    content = ' '.join(content.split())  # Normalize whitespace
+                    content = " ".join(content.split())  # Normalize whitespace
                     if len(content) > 2000:
                         content = content[:2000] + "..."
 
@@ -364,7 +369,7 @@ class SearXNGSearchClient:
                         "url": url,
                         "content": content,
                         "source": "searxng_basic",
-                        "confidence": 0.4
+                        "confidence": 0.4,
                     }
 
         except Exception as e:
@@ -408,10 +413,11 @@ class SearXNGSearchClient:
             search_queries.append(citation_components["arxiv_id"])
 
         # Strategy 4: Author + Year + Title
-        if (citation_components.get("first_author") and
-            citation_components.get("year") and
-            citation_components.get("title")):
-
+        if (
+            citation_components.get("first_author")
+            and citation_components.get("year")
+            and citation_components.get("title")
+        ):
             author = citation_components["first_author"]
             year = citation_components["year"]
             title = citation_components["title"]
@@ -426,7 +432,9 @@ class SearXNGSearchClient:
 
         # Strategy 6: Author + Year
         if citation_components.get("first_author") and citation_components.get("year"):
-            search_queries.append(f'{citation_components["first_author"]} {citation_components["year"]}')
+            search_queries.append(
+                f"{citation_components['first_author']} {citation_components['year']}"
+            )
 
         # Execute searches with academic focus
         for query in search_queries[:4]:  # Limit to prevent too many requests
@@ -453,7 +461,9 @@ class SearXNGSearchClient:
         print(f"📊 SearXNG total results: {len(unique_results)}")
         return unique_results[:5]
 
-    def _try_direct_url_validation(self, citation_components: dict[str, Any]) -> list[dict[str, str]]:
+    def _try_direct_url_validation(
+        self, citation_components: dict[str, Any]
+    ) -> list[dict[str, str]]:
         """Try direct validation for known academic sources"""
         results = []
 
@@ -508,7 +518,7 @@ class SearXNGSearchClient:
         try:
             # Clean arXiv ID
             arxiv_clean = arxiv_id.lower().replace("arxiv:", "").strip()
-            if not re.match(r'^\d+\.\d+', arxiv_clean):
+            if not re.match(r"^\d+\.\d+", arxiv_clean):
                 return None
 
             # Search for the arXiv ID
@@ -555,7 +565,9 @@ class SearXNGSearchClient:
 
         return None
 
-    def smart_citation_search(self, structured_citation, citation_text: str = "") -> list[dict[str, str]]:
+    def smart_citation_search(
+        self, structured_citation, citation_text: str = ""
+    ) -> list[dict[str, str]]:
         """
         Smart citation search using SearXNG
 

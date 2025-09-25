@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 # Load environment variables
 load_dotenv()
 
+
 def test_searxng_client():
     """Test the SearXNG client integration"""
     print("🧪 SearXNG Integration Test")
@@ -60,7 +61,7 @@ def test_searxng_client():
             "title": "Attention Is All You Need",
             "first_author": "Vaswani",
             "year": "2017",
-            "doi": "10.48550/arXiv.1706.03762"
+            "doi": "10.48550/arXiv.1706.03762",
         }
 
         citation_results = client.enhanced_citation_search("Vaswani et al. (2017)", test_citation)
@@ -82,6 +83,7 @@ def test_searxng_client():
         return False
 
     return True
+
 
 def test_search_client_factory():
     """Test the search client factory with SearXNG"""
@@ -116,6 +118,7 @@ def test_search_client_factory():
         return False
 
     return True
+
 
 if __name__ == "__main__":
     print("🔧 Testing SearXNG Integration for Citation Needed")

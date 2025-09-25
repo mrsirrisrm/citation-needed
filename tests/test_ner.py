@@ -2,8 +2,8 @@
 """
 Tests for the NER (Named Entity Recognition) citation extractor
 """
-import pytest
-from models.ner_extractor import create_ner_extractor, Citation
+
+from models.ner_extractor import create_ner_extractor
 
 
 class TestNERExtractor:
@@ -20,31 +20,34 @@ class TestNERExtractor:
             {
                 "text": "The groundbreaking work by Vaswani et al. (2017) introduced the attention mechanism.",
                 "expected_citations": ["Vaswani et al. (2017)"],
-                "description": "Attention Is All You Need paper"
+                "description": "Attention Is All You Need paper",
             },
             # Alternative format - should detect at least the journal part
             {
                 "text": "As described in Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., ... & Polosukhin, I. (2017). Attention is all you need. Advances in neural information processing systems, 30.",
-                "expected_citations": ["(2017). Attention is all you need", "Polosukhin, I. (2017)"],  # More flexible matching
-                "description": "Full citation format"
+                "expected_citations": [
+                    "(2017). Attention is all you need",
+                    "Polosukhin, I. (2017)",
+                ],  # More flexible matching
+                "description": "Full citation format",
             },
             # BERT paper
             {
                 "text": "BERT was introduced by Devlin et al. (2018) and revolutionized NLP.",
                 "expected_citations": ["Devlin et al. (2018)"],
-                "description": "BERT paper"
+                "description": "BERT paper",
             },
             # GPT paper
             {
                 "text": "The original GPT model (Radford et al., 2018) showed the potential of unsupervised learning.",
                 "expected_citations": ["(Radford et al., 2018)"],
-                "description": "GPT paper in parentheses"
+                "description": "GPT paper in parentheses",
             },
             # ResNet paper
             {
                 "text": "Deep residual networks (He et al., 2016) solved the vanishing gradient problem.",
                 "expected_citations": ["(He et al., 2016)"],
-                "description": "ResNet paper"
+                "description": "ResNet paper",
             },
         ]
 
@@ -71,12 +74,12 @@ class TestNERExtractor:
             {
                 "text": "Recent work on arXiv:2301.00234 shows promising results.",
                 "expected_type": "preprint",
-                "expected_text": "arXiv:2301.00234"
+                "expected_text": "arXiv:2301.00234",
             },
             {
                 "text": "The paper arXiv:1706.03762 introduced the Transformer architecture.",
                 "expected_type": "preprint",
-                "expected_text": "arXiv:1706.03762"
+                "expected_text": "arXiv:1706.03762",
             },
         ]
 
@@ -91,7 +94,9 @@ class TestNERExtractor:
                     found_citation = citation
                     break
 
-            assert found_citation is not None, f"Expected citation '{case['expected_text']}' not found"
+            assert found_citation is not None, (
+                f"Expected citation '{case['expected_text']}' not found"
+            )
             assert found_citation.citation_type == case["expected_type"]
 
     def test_doi_citations(self):
@@ -100,12 +105,12 @@ class TestNERExtractor:
             {
                 "text": "The study can be found at DOI: 10.1038/nature14539.",
                 "expected_type": "doi",
-                "expected_text": "DOI: 10.1038/nature14539"
+                "expected_text": "DOI: 10.1038/nature14539",
             },
             {
                 "text": "See https://doi.org/10.1126/science.aaa1234 for details.",
                 "expected_type": "doi",
-                "expected_text": "https://doi.org/10.1126/science.aaa1234"
+                "expected_text": "https://doi.org/10.1126/science.aaa1234",
             },
         ]
 
@@ -129,12 +134,12 @@ class TestNERExtractor:
             {
                 "text": "Smith, J. (2023). Deep Learning Advances. Nature Machine Intelligence, 15(3), 123-145.",
                 "expected_type": "author_year",
-                "min_confidence": 0.8
+                "min_confidence": 0.8,
             },
             {
                 "text": "Johnson, A., & Brown, B. (2022). AI Research Methods. Science, 376(6594), 789-792.",
                 "expected_type": "author_year",
-                "min_confidence": 0.8
+                "min_confidence": 0.8,
             },
         ]
 
@@ -145,8 +150,9 @@ class TestNERExtractor:
 
             # Check confidence and type
             for citation in citations:
-                assert citation.confidence >= case["min_confidence"], \
+                assert citation.confidence >= case["min_confidence"], (
                     f"Low confidence ({citation.confidence}) for: {citation.text}"
+                )
 
                 # Should detect author and year components
                 assert citation.year is not None, f"Year not extracted from: {citation.text}"
@@ -157,17 +163,17 @@ class TestNERExtractor:
             {
                 "text": "According to Smith et al. (2023), machine learning continues to advance.",
                 "min_confidence": 0.9,  # High confidence for clear citation
-                "description": "Clear author-year citation"
+                "description": "Clear author-year citation",
             },
             {
                 "text": "DOI: 10.1038/nature12345",
                 "min_confidence": 0.95,  # Very high confidence for DOI
-                "description": "DOI citation"
+                "description": "DOI citation",
             },
             {
                 "text": "Some text with (2023) but no author.",
                 "max_confidence": 0.3,  # Should be low confidence or not detected
-                "description": "Year only, no author"
+                "description": "Year only, no author",
             },
         ]
 
@@ -177,14 +183,15 @@ class TestNERExtractor:
             if "min_confidence" in case:
                 assert len(citations) > 0, f"No citations found for: {case['description']}"
                 max_conf = max(c.confidence for c in citations)
-                assert max_conf >= case["min_confidence"], \
+                assert max_conf >= case["min_confidence"], (
                     f"Confidence too low ({max_conf}) for: {case['description']}"
+                )
 
-            if "max_confidence" in case:
-                if citations:
-                    max_conf = max(c.confidence for c in citations)
-                    assert max_conf <= case["max_confidence"], \
-                        f"Confidence too high ({max_conf}) for: {case['description']}"
+            if "max_confidence" in case and citations:
+                max_conf = max(c.confidence for c in citations)
+                assert max_conf <= case["max_confidence"], (
+                    f"Confidence too high ({max_conf}) for: {case['description']}"
+                )
 
     def test_no_false_positives(self):
         """Test that non-citations are not detected"""
@@ -203,8 +210,9 @@ class TestNERExtractor:
 
             # If any citation found, confidence should be low
             for citation in citations:
-                assert citation.confidence < 0.7, \
+                assert citation.confidence < 0.7, (
                     f"High confidence false positive: {citation.text} in {text}"
+                )
 
     def test_multiple_citations_in_text(self):
         """Test extraction of multiple citations from single text"""
@@ -233,26 +241,27 @@ class TestNERExtractor:
         test_cases = [
             {
                 "text": "",  # Empty string
-                "expected_count": 0
+                "expected_count": 0,
             },
             {
                 "text": "et al.",  # Just the phrase
-                "expected_count": 0
+                "expected_count": 0,
             },
             {
                 "text": "(2023)",  # Just a year
-                "expected_count": 0
+                "expected_count": 0,
             },
             {
                 "text": "Smith et al. (2023) Smith et al. (2023)",  # Duplicate
-                "expected_count": 1  # Should deduplicate
+                "expected_count": 1,  # Should deduplicate
             },
         ]
 
         for case in test_cases:
             citations = self.ner.extract_citations(case["text"])
-            assert len(citations) == case["expected_count"], \
+            assert len(citations) == case["expected_count"], (
                 f"Expected {case['expected_count']} citations for '{case['text']}', got {len(citations)}"
+            )
 
     def test_citation_components_extraction(self):
         """Test extraction of citation components"""
@@ -260,11 +269,11 @@ class TestNERExtractor:
             {
                 "text": "Smith et al. (2023) conducted the study.",
                 "expected_authors": ["Smith"],
-                "expected_year": "2023"
+                "expected_year": "2023",
             },
             {
                 "text": "The paper DOI: 10.1038/nature12345 provides evidence.",
-                "expected_doi": "10.1038/nature12345"
+                "expected_doi": "10.1038/nature12345",
             },
         ]
 
@@ -279,12 +288,14 @@ class TestNERExtractor:
                 assert len(citation.authors) > 0, "No authors found"
 
             if "expected_year" in case:
-                assert citation.year == case["expected_year"], \
+                assert citation.year == case["expected_year"], (
                     f"Expected year {case['expected_year']}, got {citation.year}"
+                )
 
             if "expected_doi" in case:
-                assert citation.doi == case["expected_doi"], \
+                assert citation.doi == case["expected_doi"], (
                     f"Expected DOI {case['expected_doi']}, got {citation.doi}"
+                )
 
 
 def test_ner_validation():

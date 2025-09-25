@@ -22,7 +22,9 @@
       "Bash(npx tsc:*)",
       "Bash(lsof:*)",
       "Bash(xargs kill:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(sg:*)",
+      "Bash(ast-grep:*)"
     ],
     "deny": [],
     "ask": []

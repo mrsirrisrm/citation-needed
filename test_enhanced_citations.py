@@ -6,19 +6,23 @@ Testing the problematic citations from the user's example
 
 import os
 import sys
+
 from dotenv import load_dotenv
+
 
 # Add the current directory to the path
 sys.path.insert(0, os.path.dirname(__file__))
 
 # Import our components
 from models.citation_parser import create_citation_parser
-from search.firecrawl_client import create_search_client
 from models.fact_checker import create_fact_checker
 from models.ner_extractor import create_ner_extractor
+from search.firecrawl_client import create_search_client
+
 
 # Load environment variables
 load_dotenv()
+
 
 def test_enhanced_citations():
     """Test the enhanced citation verification with problematic examples"""
@@ -79,14 +83,13 @@ def test_enhanced_citations():
         print("\n📋 Running citation tests...\n")
 
         # Test each citation
-        results = []
         for i, test_case in enumerate(test_citations, 1):
             print(f"🔍 Test {i}: {test_case['citation'][:80]}...")
             print(f"   Expected: {test_case['expected']}")
 
             try:
                 # Step 1: Extract citations using NER
-                raw_citations = ner_extractor.extract_citations(test_case['citation'])
+                raw_citations = ner_extractor.extract_citations(test_case["citation"])
                 print(f"   📝 NER found {len(raw_citations)} citations")
 
                 if raw_citations:
@@ -98,8 +101,12 @@ def test_enhanced_citations():
                     if citation_parser:
                         try:
                             structured = citation_parser.parse_citation(citation.text)
-                            print(f"   🎯 Structured parsing: {structured.first_author} ({structured.year})")
-                            print(f"   📊 Confidence: {structured.confidence:.2f} ({structured.extraction_method})")
+                            print(
+                                f"   🎯 Structured parsing: {structured.first_author} ({structured.year})"
+                            )
+                            print(
+                                f"   📊 Confidence: {structured.confidence:.2f} ({structured.extraction_method})"
+                            )
 
                             # Show extracted components
                             if structured.arxiv_id:
@@ -129,7 +136,9 @@ def test_enhanced_citations():
                                         source_type = source.get("source", "unknown")
                                         confidence = source.get("confidence", "N/A")
                                         title = source.get("title", "No title")[:40]
-                                        print(f"      {j+1}. [{source_type}] {title} (conf: {confidence})")
+                                        print(
+                                            f"      {j + 1}. [{source_type}] {title} (conf: {confidence})"
+                                        )
 
                         except Exception as e:
                             print(f"   ❌ Fact checking failed: {e}")
@@ -152,6 +161,7 @@ def test_enhanced_citations():
 
     return True
 
+
 def test_direct_validation():
     """Test direct URL validation for academic sources"""
     print("\n🧪 Direct URL Validation Test")
@@ -171,6 +181,7 @@ def test_direct_validation():
 
             # Create a mock structured citation
             from models.citation_parser import StructuredCitation
+
             if source_type == "arXiv":
                 citation = StructuredCitation(
                     original_text="Test citation",
@@ -179,7 +190,7 @@ def test_direct_validation():
                     title="Attention Is All You Need",
                     year="2017",
                     arxiv_id=test_id,
-                    confidence=0.9
+                    confidence=0.9,
                 )
             elif source_type == "DOI":
                 citation = StructuredCitation(
@@ -189,7 +200,7 @@ def test_direct_validation():
                     title="Test Paper",
                     year="2023",
                     doi=test_id,
-                    confidence=0.9
+                    confidence=0.9,
                 )
             else:
                 citation = StructuredCitation(
@@ -199,19 +210,19 @@ def test_direct_validation():
                     title="Medical Study",
                     year="2022",
                     pmid=test_id,
-                    confidence=0.9
+                    confidence=0.9,
                 )
 
             # Test direct validation (this will fail with mock, but shows the flow)
             try:
-                results = search_client._try_direct_url_validation({
-                    "doi": citation.doi,
-                    "arxiv_id": citation.arxiv_id,
-                    "pmid": citation.pmid
-                })
+                results = search_client._try_direct_url_validation(
+                    {"doi": citation.doi, "arxiv_id": citation.arxiv_id, "pmid": citation.pmid}
+                )
                 print(f"   Results: {len(results)} found")
                 for result in results:
-                    print(f"   - {result.get('title', 'No title')} ({result.get('confidence', 'N/A')})")
+                    print(
+                        f"   - {result.get('title', 'No title')} ({result.get('confidence', 'N/A')})"
+                    )
 
             except Exception as e:
                 print(f"   Error: {e}")
@@ -220,6 +231,7 @@ def test_direct_validation():
 
     except Exception as e:
         print(f"❌ Direct validation test failed: {e}")
+
 
 if __name__ == "__main__":
     # Run tests

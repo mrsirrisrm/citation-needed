@@ -16,6 +16,7 @@ class TaskStatus(Enum):
 @dataclass
 class AsyncTask:
     """Represents an asynchronous task"""
+
     id: str
     status: TaskStatus = TaskStatus.PENDING
     result: Any = None
@@ -37,7 +38,9 @@ class AsyncProcessor:
         self._lock = threading.Lock()
         self.default_timeout = default_timeout
 
-    def create_task(self, task_id: str, func: Callable, *args, timeout: float = None, **kwargs) -> AsyncTask:
+    def create_task(
+        self, task_id: str, func: Callable, *args, timeout: float = None, **kwargs
+    ) -> AsyncTask:
         """Create a new asynchronous task with timeout"""
         if timeout is None:
             timeout = self.default_timeout
@@ -176,7 +179,8 @@ class AsyncProcessor:
         current_time = time.time()
         with self._lock:
             old_tasks = [
-                task_id for task_id, task in self.tasks.items()
+                task_id
+                for task_id, task in self.tasks.items()
                 if current_time - task.created_at > max_age
             ]
             for task_id in old_tasks:

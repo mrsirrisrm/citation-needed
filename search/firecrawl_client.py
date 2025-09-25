@@ -1,12 +1,11 @@
 import os
 import re
-import json
 import time
-import requests
-from typing import Any, Optional, Dict
-from urllib.parse import urlparse, urljoin
+from typing import Any
 
+import requests
 from firecrawl import FirecrawlApp
+
 
 # Import SearXNG client for type hints
 try:
@@ -59,13 +58,13 @@ class FirecrawlSearchClient:
 
             processed_results = []
             # Handle SearchResponse object
-            if hasattr(search_results, 'data'):
+            if hasattr(search_results, "data"):
                 results_list = search_results.data
-            elif hasattr(search_results, 'results'):
+            elif hasattr(search_results, "results"):
                 results_list = search_results.results
             else:
                 # Fallback to dict access
-                results_list = getattr(search_results, 'data', [])
+                results_list = getattr(search_results, "data", [])
 
             for result in results_list[:num_results]:
                 processed_result = {
@@ -96,8 +95,10 @@ class FirecrawlSearchClient:
                 metadata={
                     "query": query,
                     "num_results": num_results,
-                    "results_count": len(processed_results) if 'processed_results' in locals() else 0
-                }
+                    "results_count": len(processed_results)
+                    if "processed_results" in locals()
+                    else 0,
+                },
             )
 
     def scrape_url(self, url: str) -> dict[str, str]:
@@ -154,7 +155,7 @@ class FirecrawlSearchClient:
                 duration=duration,
                 success=success,
                 error_message=error_message,
-                metadata={"url": url, "result_type": type(result).__name__ if result else None}
+                metadata={"url": url, "result_type": type(result).__name__ if result else None},
             )
 
     def enhanced_citation_search(
@@ -229,7 +230,9 @@ class FirecrawlSearchClient:
 
         return unique_results[:5]  # Return top 5 unique results
 
-    def _try_direct_url_validation(self, citation_components: dict[str, Any]) -> list[dict[str, str]]:
+    def _try_direct_url_validation(
+        self, citation_components: dict[str, Any]
+    ) -> list[dict[str, str]]:
         """
         Try direct URL validation for known academic sources
 
@@ -261,7 +264,7 @@ class FirecrawlSearchClient:
 
         return results
 
-    def _validate_doi(self, doi: str) -> Optional[dict[str, str]]:
+    def _validate_doi(self, doi: str) -> dict[str, str] | None:
         """Validate a DOI by resolving it and checking content"""
         try:
             # Clean DOI
@@ -275,16 +278,16 @@ class FirecrawlSearchClient:
 
             # Try to get basic info from DOI resolver
             headers = {
-                'User-Agent': 'Citation-Needed/1.0 (https://github.com/martin/citation-needed)',
-                'Accept': 'application/json',
+                "User-Agent": "Citation-Needed/1.0 (https://github.com/martin/citation-needed)",
+                "Accept": "application/json",
             }
 
             # First try Content Negotiation
             try:
                 response = requests.get(
                     f"https://doi.org/{doi_clean}",
-                    headers={**headers, 'Accept': 'application/vnd.citationstyles.csl+json'},
-                    timeout=10
+                    headers={**headers, "Accept": "application/vnd.citationstyles.csl+json"},
+                    timeout=10,
                 )
                 if response.status_code == 200:
                     doi_data = response.json()
@@ -296,7 +299,10 @@ class FirecrawlSearchClient:
                             "type": "doi",
                             "resolved": True,
                             "title": doi_data.get("title"),
-                            "authors": [author.get("family") + ", " + author.get("given") for author in doi_data.get("author", [])[:3]],
+                            "authors": [
+                                author.get("family") + ", " + author.get("given")
+                                for author in doi_data.get("author", [])[:3]
+                            ],
                             "journal": doi_data.get("container-title"),
                             "year": doi_data.get("published", {}).get("date-parts", [[""]])[0][0],
                         },
@@ -326,12 +332,12 @@ class FirecrawlSearchClient:
 
         return None
 
-    def _validate_arxiv(self, arxiv_id: str) -> Optional[dict[str, str]]:
+    def _validate_arxiv(self, arxiv_id: str) -> dict[str, str] | None:
         """Validate an arXiv ID using the arXiv API"""
         try:
             # Clean arXiv ID
             arxiv_clean = arxiv_id.lower().replace("arxiv:", "").strip()
-            if not re.match(r'^\d+\.\d+', arxiv_clean):
+            if not re.match(r"^\d+\.\d+", arxiv_clean):
                 return None
 
             print(f"📄 Validating arXiv: {arxiv_clean}")
@@ -342,22 +348,26 @@ class FirecrawlSearchClient:
 
             if response.status_code == 200:
                 import xml.etree.ElementTree as ET
+
                 root = ET.fromstring(response.text)
 
                 # Find entry in XML response
-                namespace = {'atom': 'http://www.w3.org/2005/Atom', 'arxiv': 'http://arxiv.org/schemas/atom'}
-                entry = root.find('atom:entry', namespace)
+                namespace = {
+                    "atom": "http://www.w3.org/2005/Atom",
+                    "arxiv": "http://arxiv.org/schemas/atom",
+                }
+                entry = root.find("atom:entry", namespace)
 
                 if entry is not None:
-                    title = entry.find('atom:title', namespace).text.strip()
+                    title = entry.find("atom:title", namespace).text.strip()
                     authors = []
-                    for author in entry.findall('atom:author', namespace):
-                        name = author.find('atom:name', namespace).text
+                    for author in entry.findall("atom:author", namespace):
+                        name = author.find("atom:name", namespace).text
                         authors.append(name)
 
-                    summary = entry.find('atom:summary', namespace).text.strip()
-                    published = entry.find('atom:published', namespace).text
-                    year = published.split('-')[0] if published else ""
+                    summary = entry.find("atom:summary", namespace).text.strip()
+                    published = entry.find("atom:published", namespace).text
+                    year = published.split("-")[0] if published else ""
 
                     return {
                         "title": title,
@@ -380,7 +390,7 @@ class FirecrawlSearchClient:
 
         return None
 
-    def _validate_pubmed(self, pmid: str) -> Optional[dict[str, str]]:
+    def _validate_pubmed(self, pmid: str) -> dict[str, str] | None:
         """Validate a PubMed ID"""
         try:
             # Clean PMID
@@ -403,7 +413,9 @@ class FirecrawlSearchClient:
                     title = pmid_data.get("title", "")
                     authors = pmid_data.get("authors", [])
                     journal = pmid_data.get("fulljournalname", "")
-                    year = pmid_data.get("pubdate", "").split()[0] if pmid_data.get("pubdate") else ""
+                    year = (
+                        pmid_data.get("pubdate", "").split()[0] if pmid_data.get("pubdate") else ""
+                    )
 
                     return {
                         "title": title,
@@ -473,9 +485,15 @@ class FirecrawlSearchClient:
                 search_queries.append(structured_citation.arxiv_id)
 
             # Author + year + title
-            if structured_citation.first_author and structured_citation.year and structured_citation.title:
+            if (
+                structured_citation.first_author
+                and structured_citation.year
+                and structured_citation.title
+            ):
                 title_snippet = " ".join(structured_citation.title.split()[:6])
-                search_queries.append(f'{structured_citation.first_author} {structured_citation.year} "{title_snippet}"')
+                search_queries.append(
+                    f'{structured_citation.first_author} {structured_citation.year} "{title_snippet}"'
+                )
 
             # Title search
             if structured_citation.title:
@@ -483,7 +501,9 @@ class FirecrawlSearchClient:
 
             # Author + year
             if structured_citation.first_author and structured_citation.year:
-                search_queries.append(f'{structured_citation.first_author} {structured_citation.year}')
+                search_queries.append(
+                    f"{structured_citation.first_author} {structured_citation.year}"
+                )
 
             # Execute searches
             for query in search_queries[:3]:
@@ -510,7 +530,7 @@ class FirecrawlSearchClient:
             confidence = result.get("confidence", "N/A")
             source = result.get("source", "unknown")
             title = result.get("title", "No title")[:60]
-            print(f"  {i+1}. [{source}] {title} (conf: {confidence})")
+            print(f"  {i + 1}. [{source}] {title} (conf: {confidence})")
 
         return unique_results[:5]
 
@@ -554,52 +574,64 @@ class MockSearchClient:
         """Mock enhanced search"""
         return self.search(citation_text, num_results=3)
 
-    def _try_direct_url_validation(self, citation_components: dict[str, Any]) -> list[dict[str, str]]:
+    def _try_direct_url_validation(
+        self, citation_components: dict[str, Any]
+    ) -> list[dict[str, str]]:
         """Mock direct URL validation for testing"""
         results = []
 
         # Mock DOI validation
         if citation_components.get("doi"):
-            results.append({
-                "title": f"Mock DOI Validation: {citation_components['doi']}",
-                "url": f"https://doi.org/{citation_components['doi'].replace('doi:', '')}",
-                "content": "Mock DOI validation result",
-                "metadata": {"type": "doi", "resolved": True},
-                "source": "doi_mock",
-                "confidence": 0.95,
-            })
+            results.append(
+                {
+                    "title": f"Mock DOI Validation: {citation_components['doi']}",
+                    "url": f"https://doi.org/{citation_components['doi'].replace('doi:', '')}",
+                    "content": "Mock DOI validation result",
+                    "metadata": {"type": "doi", "resolved": True},
+                    "source": "doi_mock",
+                    "confidence": 0.95,
+                }
+            )
 
         # Mock arXiv validation
         if citation_components.get("arxiv_id"):
-            results.append({
-                "title": f"Mock arXiv Validation: {citation_components['arxiv_id']}",
-                "url": f"https://arxiv.org/abs/{citation_components['arxiv_id'].replace('arxiv:', '')}",
-                "content": "Mock arXiv validation result",
-                "metadata": {"type": "arxiv", "resolved": True},
-                "source": "arxiv_mock",
-                "confidence": 0.98,
-            })
+            results.append(
+                {
+                    "title": f"Mock arXiv Validation: {citation_components['arxiv_id']}",
+                    "url": f"https://arxiv.org/abs/{citation_components['arxiv_id'].replace('arxiv:', '')}",
+                    "content": "Mock arXiv validation result",
+                    "metadata": {"type": "arxiv", "resolved": True},
+                    "source": "arxiv_mock",
+                    "confidence": 0.98,
+                }
+            )
 
         # Mock PubMed validation
         if citation_components.get("pmid"):
-            results.append({
-                "title": f"Mock PubMed Validation: {citation_components['pmid']}",
-                "url": f"https://pubmed.ncbi.nlm.nih.gov/{citation_components['pmid']}",
-                "content": "Mock PubMed validation result",
-                "metadata": {"type": "pubmed", "resolved": True},
-                "source": "pubmed_mock",
-                "confidence": 0.96,
-            })
+            results.append(
+                {
+                    "title": f"Mock PubMed Validation: {citation_components['pmid']}",
+                    "url": f"https://pubmed.ncbi.nlm.nih.gov/{citation_components['pmid']}",
+                    "content": "Mock PubMed validation result",
+                    "metadata": {"type": "pubmed", "resolved": True},
+                    "source": "pubmed_mock",
+                    "confidence": 0.96,
+                }
+            )
 
         return results
 
-    def smart_citation_search(self, structured_citation, citation_text: str = "") -> list[dict[str, str]]:
+    def smart_citation_search(
+        self, structured_citation, citation_text: str = ""
+    ) -> list[dict[str, str]]:
         """Mock smart citation search"""
-        return self._try_direct_url_validation({
-            "doi": structured_citation.doi,
-            "arxiv_id": structured_citation.arxiv_id,
-            "pmid": structured_citation.pmid,
-        })
+        return self._try_direct_url_validation(
+            {
+                "doi": structured_citation.doi,
+                "arxiv_id": structured_citation.arxiv_id,
+                "pmid": structured_citation.pmid,
+            }
+        )
 
     def validate_setup(self) -> bool:
         """Mock validation always returns True"""
@@ -624,6 +656,7 @@ def create_search_client(use_mock: bool = False, use_searxng: bool = False):
     if use_searxng:
         try:
             from .searxng_client import SearXNGSearchClient
+
             return SearXNGSearchClient()
         except Exception as e:
             print(f"Warning: SearXNG client failed to initialize: {e}")

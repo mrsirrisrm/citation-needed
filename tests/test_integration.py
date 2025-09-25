@@ -2,14 +2,17 @@
 """
 Integration tests for the Citation Needed system
 """
-import pytest
+
 import os
+
+import pytest
 from dotenv import load_dotenv
 
 from models.chat_model import create_chat_model
-from models.ner_extractor import create_ner_extractor
 from models.fact_checker import create_fact_checker
+from models.ner_extractor import create_ner_extractor
 from search.firecrawl_client import create_search_client
+
 
 load_dotenv()
 
@@ -44,15 +47,17 @@ class TestIntegration:
         citations = self.ner.extract_citations(mock_response)
         print(f"Found {len(citations)} citations:")
         for i, citation in enumerate(citations):
-            print(f"  {i+1}. '{citation.text}' (type: {citation.citation_type}, conf: {citation.confidence:.2f})")
+            print(
+                f"  {i + 1}. '{citation.text}' (type: {citation.citation_type}, conf: {citation.confidence:.2f})"
+            )
 
         assert len(citations) > 0, "No citations detected"
 
         # Step 2: Fact-check citations
         fact_check_results = self.fact_checker.fact_check_citations(citations)
-        print(f"\nFact-check results:")
+        print("\nFact-check results:")
         for i, result in enumerate(fact_check_results):
-            print(f"  {i+1}. Status: {result.verification_status}")
+            print(f"  {i + 1}. Status: {result.verification_status}")
             print(f"      Confidence: {result.confidence:.2f}")
             print(f"      Sources: {len(result.sources_found)}")
             print(f"      Explanation: {result.explanation[:100]}...")
@@ -61,7 +66,7 @@ class TestIntegration:
 
         # Step 3: Verify each result has required fields
         for result in fact_check_results:
-            assert result.verification_status in ['verified', 'not_found', 'contradicted', 'error']
+            assert result.verification_status in ["verified", "not_found", "contradicted", "error"]
             assert 0.0 <= result.confidence <= 1.0
             assert isinstance(result.sources_found, list)
             assert isinstance(result.explanation, str)
@@ -102,17 +107,17 @@ class TestIntegration:
             {
                 "text": "The groundbreaking Attention Is All You Need paper by Vaswani et al. (2017) introduced transformers.",
                 "expected_paper": "transformers",
-                "expected_authors": "Vaswani"
+                "expected_authors": "Vaswani",
             },
             {
                 "text": "BERT (Devlin et al., 2018) revolutionized natural language understanding.",
                 "expected_paper": "BERT",
-                "expected_authors": "Devlin"
+                "expected_authors": "Devlin",
             },
             {
                 "text": "The original GPT paper (Radford et al., 2018) demonstrated unsupervised learning potential.",
                 "expected_paper": "GPT",
-                "expected_authors": "Radford"
+                "expected_authors": "Radford",
             },
         ]
 
@@ -128,8 +133,9 @@ class TestIntegration:
             citation_lower = found_citation.text.lower()
 
             # Check for expected authors
-            assert paper_info["expected_authors"].lower() in citation_lower, \
+            assert paper_info["expected_authors"].lower() in citation_lower, (
                 f"Expected author {paper_info['expected_authors']} not found in {found_citation.text}"
+            )
 
             # Fact-check the citation
             fact_results = self.fact_checker.fact_check_citations([found_citation])
@@ -195,7 +201,7 @@ class TestIntegration:
 
         # Time fact-checking (with mock client)
         start_time = time.time()
-        fact_results = self.fact_checker.fact_check_citations(citations)
+        self.fact_checker.fact_check_citations(citations)
         fact_check_time = time.time() - start_time
 
         print(f"Fact-checking: {fact_check_time:.3f}s for {len(citations)} citations")

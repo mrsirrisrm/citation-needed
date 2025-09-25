@@ -2,22 +2,18 @@
 """
 Development server with file watching for Citation Needed
 """
+
 import os
+import subprocess
 import sys
 import time
-import subprocess
-from pathlib import Path
+
 
 def watch_and_reload():
     """Watch for file changes and restart the app"""
 
     # Files to watch
-    watch_files = [
-        "app.py",
-        "models/",
-        "ui/",
-        "search/"
-    ]
+    watch_files = ["app.py", "models/", "ui/", "search/"]
 
     # Get initial modification times
     def get_mtimes():
@@ -26,9 +22,9 @@ def watch_and_reload():
             if os.path.isfile(item):
                 mtimes[item] = os.path.getmtime(item)
             elif os.path.isdir(item):
-                for root, dirs, files in os.walk(item):
+                for root, _dirs, files in os.walk(item):
                     for file in files:
-                        if file.endswith('.py') or file.endswith('.css'):
+                        if file.endswith(".py") or file.endswith(".css"):
                             path = os.path.join(root, file)
                             mtimes[path] = os.path.getmtime(path)
         return mtimes
@@ -46,7 +42,7 @@ def watch_and_reload():
             process.terminate()
             process.wait()
 
-        print(f"\n{'='*50}")
+        print(f"\n{'=' * 50}")
         print("🚀 Starting app...")
         process = subprocess.Popen([sys.executable, "app.py"])
         return process
@@ -78,6 +74,7 @@ def watch_and_reload():
             process.terminate()
             process.wait()
         print("👋 Goodbye!")
+
 
 if __name__ == "__main__":
     watch_and_reload()

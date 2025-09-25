@@ -1,31 +1,30 @@
+import json
 import os
 import re
-import json
-from dataclasses import dataclass, asdict
-from typing import Any, Optional, Dict, List
-import dspy
+from dataclasses import dataclass
 
-from .ner_extractor import Citation
+import dspy
 
 
 @dataclass
 class StructuredCitation:
     """Structured representation of a parsed citation"""
+
     original_text: str
-    authors: List[str]
+    authors: list[str]
     first_author: str
     title: str
     year: str
-    journal: Optional[str] = None
-    conference: Optional[str] = None
-    book_title: Optional[str] = None
-    publisher: Optional[str] = None
-    doi: Optional[str] = None
-    arxiv_id: Optional[str] = None
-    pmid: Optional[str] = None
-    volume: Optional[str] = None
-    issue: Optional[str] = None
-    pages: Optional[str] = None
+    journal: str | None = None
+    conference: str | None = None
+    book_title: str | None = None
+    publisher: str | None = None
+    doi: str | None = None
+    arxiv_id: str | None = None
+    pmid: str | None = None
+    volume: str | None = None
+    issue: str | None = None
+    pages: str | None = None
     citation_type: str = "unknown"
     confidence: float = 0.0
     extraction_method: str = "llm"  # "llm" or "regex"
@@ -34,9 +33,7 @@ class StructuredCitation:
 class ParseCitationSignature(dspy.Signature):
     """Parse a citation text into structured components using LLM"""
 
-    citation_text = dspy.InputField(
-        desc="The raw citation text to parse"
-    )
+    citation_text = dspy.InputField(desc="The raw citation text to parse")
     structured_citation = dspy.OutputField(
         desc="JSON object with parsed citation components: authors, first_author, title, year, journal, doi, arxiv_id, citation_type, confidence"
     )
@@ -72,13 +69,15 @@ class CitationParser:
     def _compile_regex_patterns(self):
         """Compile regex patterns for fallback parsing"""
         self.patterns = {
-            'doi': re.compile(r'doi:\s*10\.\d+/[^\s,]+', re.IGNORECASE),
-            'arxiv': re.compile(r'arXiv:\s*(\d+\.\d+)', re.IGNORECASE),
-            'pmid': re.compile(r'pmid:\s*(\d+)', re.IGNORECASE),
-            'year': re.compile(r'\b(19|20)\d{2}\b'),
-            'authors_et_al': re.compile(r'([A-Z][a-zA-Z\-]+)(?:,\s*[A-Z]\.?)*\s+et al\.?', re.IGNORECASE),
-            'pages': re.compile(r'(\d+)\s*[-–]\s*(\d+|\w+)'),
-            'volume_issue': re.compile(r'(\d+)\s*\((\d+)\)'),
+            "doi": re.compile(r"doi:\s*10\.\d+/[^\s,]+", re.IGNORECASE),
+            "arxiv": re.compile(r"arXiv:\s*(\d+\.\d+)", re.IGNORECASE),
+            "pmid": re.compile(r"pmid:\s*(\d+)", re.IGNORECASE),
+            "year": re.compile(r"\b(19|20)\d{2}\b"),
+            "authors_et_al": re.compile(
+                r"([A-Z][a-zA-Z\-]+)(?:,\s*[A-Z]\.?)*\s+et al\.?", re.IGNORECASE
+            ),
+            "pages": re.compile(r"(\d+)\s*[-–]\s*(\d+|\w+)"),
+            "volume_issue": re.compile(r"(\d+)\s*\((\d+)\)"),
         }
 
     def parse_citation(self, citation_text: str, use_llm: bool = True) -> StructuredCitation:
@@ -105,29 +104,6 @@ class CitationParser:
     def _parse_with_llm(self, citation_text: str) -> StructuredCitation:
         """Parse citation using LLM"""
 
-        prompt = f"""
-        Parse the following academic citation into structured components. Return a JSON object with these fields:
-        - authors: list of author names (max 3, then "et al.")
-        - first_author: first author's name
-        - title: paper title
-        - year: publication year
-        - journal: journal name (if applicable)
-        - conference: conference name (if applicable)
-        - book_title: book title (if applicable)
-        - publisher: publisher name (if applicable)
-        - doi: DOI identifier (if present)
-        - arxiv_id: arXiv ID (if present)
-        - pmid: PubMed ID (if present)
-        - volume: volume number (if present)
-        - issue: issue number (if present)
-        - pages: page numbers (if present)
-        - citation_type: one of "journal", "conference", "book", "preprint", "thesis", "unknown"
-        - confidence: confidence score 0.0-1.0
-
-        Citation: "{citation_text}"
-
-        Return only valid JSON.
-        """
 
         try:
             with dspy.context(lm=self.lm):
@@ -138,38 +114,38 @@ class CitationParser:
                 parsed_data = json.loads(result.structured_citation)
             except json.JSONDecodeError:
                 # Try to extract JSON from the response
-                json_match = re.search(r'\{.*\}', result.structured_citation, re.DOTALL)
+                json_match = re.search(r"\{.*\}", result.structured_citation, re.DOTALL)
                 if json_match:
                     parsed_data = json.loads(json_match.group())
                 else:
-                    raise ValueError("No valid JSON found in LLM response")
+                    raise ValueError("No valid JSON found in LLM response") from None
 
             # Parse confidence score safely
             try:
-                confidence = float(parsed_data.get('confidence', 0.8))
+                confidence = float(parsed_data.get("confidence", 0.8))
             except (ValueError, TypeError):
                 confidence = 0.8
 
             # Convert to StructuredCitation
             structured_citation = StructuredCitation(
                 original_text=citation_text,
-                authors=parsed_data.get('authors', []),
-                first_author=parsed_data.get('first_author', ''),
-                title=parsed_data.get('title', ''),
-                year=parsed_data.get('year', ''),
-                journal=parsed_data.get('journal'),
-                conference=parsed_data.get('conference'),
-                book_title=parsed_data.get('book_title'),
-                publisher=parsed_data.get('publisher'),
-                doi=parsed_data.get('doi'),
-                arxiv_id=parsed_data.get('arxiv_id'),
-                pmid=parsed_data.get('pmid'),
-                volume=parsed_data.get('volume'),
-                issue=parsed_data.get('issue'),
-                pages=parsed_data.get('pages'),
-                citation_type=parsed_data.get('citation_type', 'unknown'),
+                authors=parsed_data.get("authors", []),
+                first_author=parsed_data.get("first_author", ""),
+                title=parsed_data.get("title", ""),
+                year=parsed_data.get("year", ""),
+                journal=parsed_data.get("journal"),
+                conference=parsed_data.get("conference"),
+                book_title=parsed_data.get("book_title"),
+                publisher=parsed_data.get("publisher"),
+                doi=parsed_data.get("doi"),
+                arxiv_id=parsed_data.get("arxiv_id"),
+                pmid=parsed_data.get("pmid"),
+                volume=parsed_data.get("volume"),
+                issue=parsed_data.get("issue"),
+                pages=parsed_data.get("pages"),
+                citation_type=parsed_data.get("citation_type", "unknown"),
                 confidence=confidence,
-                extraction_method='llm'
+                extraction_method="llm",
             )
 
             # Validate and clean the parsed data
@@ -183,17 +159,17 @@ class CitationParser:
         """Parse citation using regex patterns as fallback"""
 
         # Enhanced patterns for URL extraction
-        arxiv_url_match = re.search(r'arxiv\.org/abs/(\d+\.\d+)', citation_text)
-        doi_url_match = re.search(r'doi\.org/(10\.\d+/[^\s\)]+)', citation_text)
+        arxiv_url_match = re.search(r"arxiv\.org/abs/(\d+\.\d+)", citation_text)
+        doi_url_match = re.search(r"doi\.org/(10\.\d+/[^\s\)]+)", citation_text)
 
         # Extract basic components
-        doi_match = self.patterns['doi'].search(citation_text)
-        arxiv_match = self.patterns['arxiv'].search(citation_text)
-        pmid_match = self.patterns['pmid'].search(citation_text)
-        year_match = self.patterns['year'].search(citation_text)
-        authors_match = self.patterns['authors_et_al'].search(citation_text)
-        pages_match = self.patterns['pages'].search(citation_text)
-        volume_issue_match = self.patterns['volume_issue'].search(citation_text)
+        doi_match = self.patterns["doi"].search(citation_text)
+        arxiv_match = self.patterns["arxiv"].search(citation_text)
+        pmid_match = self.patterns["pmid"].search(citation_text)
+        year_match = self.patterns["year"].search(citation_text)
+        authors_match = self.patterns["authors_et_al"].search(citation_text)
+        pages_match = self.patterns["pages"].search(citation_text)
+        volume_issue_match = self.patterns["volume_issue"].search(citation_text)
 
         # Extract title from quoted text (common pattern in our test cases)
         title_match = re.search(r'"([^"]+)"', citation_text)
@@ -203,12 +179,12 @@ class CitationParser:
         if not title and year_match:
             year_pos = year_match.start()
             # Look for journal/publisher indicators after year
-            journal_indicators = [r'\.', r'\s+[A-Z]', r',\s', r'\s+-\s+']
+            journal_indicators = [r"\.", r"\s+[A-Z]", r",\s", r"\s+-\s+"]
             for pattern in journal_indicators:
-                match = re.search(pattern, citation_text[year_pos + 4:])
+                match = re.search(pattern, citation_text[year_pos + 4 :])
                 if match:
                     title_end = year_pos + 4 + match.start()
-                    title = citation_text[year_pos + 4:title_end].strip('. ,')
+                    title = citation_text[year_pos + 4 : title_end].strip(". ,")
                     break
 
         # Extract authors from common patterns
@@ -219,7 +195,7 @@ class CitationParser:
             authors = [first_author]
         else:
             # Try to extract author from "by Author" pattern
-            author_by_match = re.search(r'by\s+([A-Z][a-zA-Z\-]+)', citation_text)
+            author_by_match = re.search(r"by\s+([A-Z][a-zA-Z\-]+)", citation_text)
             if author_by_match:
                 first_author = author_by_match.group(1)
                 authors = [first_author]
@@ -229,13 +205,15 @@ class CitationParser:
         if arxiv_match or arxiv_url_match:
             citation_type = "preprint"
         elif doi_match or doi_url_match:
-            if any(word in citation_text.lower() for word in ['journal', 'proceedings']):
+            if any(word in citation_text.lower() for word in ["journal", "proceedings"]):
                 citation_type = "journal"
             else:
                 citation_type = "article"
-        elif any(word in citation_text.lower() for word in ['conference', 'symposium']):
+        elif any(word in citation_text.lower() for word in ["conference", "symposium"]):
             citation_type = "conference"
-        elif any(word in citation_text.lower() for word in ['book', 'press', 'publishing', 'textbook']):
+        elif any(
+            word in citation_text.lower() for word in ["book", "press", "publishing", "textbook"]
+        ):
             citation_type = "book"
 
         # Use URL matches if available, otherwise use pattern matches
@@ -271,7 +249,7 @@ class CitationParser:
             journal="",  # Would need more sophisticated extraction
             citation_type=citation_type,
             confidence=min(0.8, confidence),  # Cap at 0.8 for regex
-            extraction_method='regex',
+            extraction_method="regex",
             doi=doi,
             arxiv_id=arxiv_id,
             pmid=pmid_match.group(1) if pmid_match else None,
@@ -286,7 +264,7 @@ class CitationParser:
         """Validate and clean parsed citation data"""
 
         # Clean up strings
-        citation.title = citation.title.strip('. ') if citation.title else ""
+        citation.title = citation.title.strip(". ") if citation.title else ""
         citation.first_author = citation.first_author.strip() if citation.first_author else ""
         citation.year = citation.year.strip() if citation.year else ""
 
@@ -294,15 +272,15 @@ class CitationParser:
         citation.authors = [author.strip() for author in citation.authors if author.strip()]
 
         # Validate year format
-        if citation.year and not re.match(r'^(19|20)\d{2}$', citation.year):
+        if citation.year and not re.match(r"^(19|20)\d{2}$", citation.year):
             citation.year = ""
 
         # Validate DOI format
-        if citation.doi and not citation.doi.lower().startswith('doi:'):
+        if citation.doi and not citation.doi.lower().startswith("doi:"):
             citation.doi = f"doi:{citation.doi}"
 
         # Validate arXiv ID
-        if citation.arxiv_id and not citation.arxiv_id.lower().startswith('arxiv:'):
+        if citation.arxiv_id and not citation.arxiv_id.lower().startswith("arxiv:"):
             citation.arxiv_id = f"arXiv:{citation.arxiv_id}"
 
         # Adjust confidence based on data quality
@@ -313,7 +291,7 @@ class CitationParser:
 
         return citation
 
-    def extract_citations_from_text(self, text: str) -> List[StructuredCitation]:
+    def extract_citations_from_text(self, text: str) -> list[StructuredCitation]:
         """
         Extract and parse all citations from a larger text
 
@@ -325,6 +303,7 @@ class CitationParser:
         """
         # First use the existing NER extractor to find citation boundaries
         from .ner_extractor import AcademicNER
+
         ner = AcademicNER()
         raw_citations = ner.extract_citations(text)
 
@@ -346,13 +325,13 @@ class CitationParser:
                     title="",
                     year="",
                     confidence=0.3,
-                    extraction_method="fallback"
+                    extraction_method="fallback",
                 )
                 structured_citations.append(structured)
 
         return structured_citations
 
-    def generate_search_queries(self, citation: StructuredCitation) -> List[str]:
+    def generate_search_queries(self, citation: StructuredCitation) -> list[str]:
         """
         Generate effective search queries from a structured citation
 
@@ -373,7 +352,7 @@ class CitationParser:
         # Strategy 2: First author + year + title snippet
         if citation.first_author and citation.year and citation.title:
             title_snippet = citation.title.split()[:5]  # First 5 words
-            queries.append(f'{citation.first_author} {citation.year} {" ".join(title_snippet)}')
+            queries.append(f"{citation.first_author} {citation.year} {' '.join(title_snippet)}")
 
         # Strategy 3: Title search
         if citation.title:
@@ -381,14 +360,14 @@ class CitationParser:
 
         # Strategy 4: Author + year
         if citation.first_author and citation.year:
-            queries.append(f'{citation.first_author} {citation.year}')
+            queries.append(f"{citation.first_author} {citation.year}")
 
         # Strategy 5: Journal/conference + year + title keywords
         if citation.journal and citation.year:
             title_keywords = citation.title.split()[:3] if citation.title else []
-            query = f'{citation.journal} {citation.year}'
+            query = f"{citation.journal} {citation.year}"
             if title_keywords:
-                query += f' {" ".join(title_keywords)}'
+                query += f" {' '.join(title_keywords)}"
             queries.append(query)
 
         # Remove duplicates and empty queries

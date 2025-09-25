@@ -2,10 +2,13 @@
 """
 Test runner for Citation Needed
 """
-import sys
-import subprocess
+
 import os
+import subprocess
+import sys
+
 from dotenv import load_dotenv
+
 
 # Load environment variables
 load_dotenv()
@@ -20,7 +23,7 @@ def run_test_suite():
     has_openrouter = bool(os.getenv("OPENROUTER_API_KEY"))
     has_firecrawl = bool(os.getenv("FIRECRAWL_API_KEY"))
 
-    print(f"API Keys Available:")
+    print("API Keys Available:")
     print(f"  OpenRouter: {'✓' if has_openrouter else '✗'}")
     print(f"  Firecrawl: {'✓' if has_firecrawl else '✗'}")
     print()
@@ -40,13 +43,14 @@ def run_test_suite():
 
         try:
             # Try to run the test file directly
-            result = subprocess.run([sys.executable, test_file],
-                                  capture_output=True, text=True, timeout=120)
+            result = subprocess.run(
+                [sys.executable, test_file], capture_output=True, text=True, timeout=120
+            )
 
             if result.returncode == 0:
                 print(f"✓ {description} tests PASSED")
                 # Print last few lines of output
-                output_lines = result.stdout.split('\n')
+                output_lines = result.stdout.split("\n")
                 for line in output_lines[-3:]:
                     if line.strip():
                         print(f"  {line}")
@@ -99,8 +103,7 @@ def run_specific_test(test_name):
     print(f"Running {test_name} tests...")
 
     try:
-        result = subprocess.run([sys.executable, test_file],
-                              capture_output=False, timeout=120)
+        result = subprocess.run([sys.executable, test_file], capture_output=False, timeout=120)
         return result.returncode == 0
     except Exception as e:
         print(f"Error running test: {e}")
@@ -111,8 +114,7 @@ def run_pytest():
     """Run tests using pytest"""
     print("Running tests with pytest...")
     try:
-        result = subprocess.run([sys.executable, "-m", "pytest", "tests/", "-v"],
-                              timeout=180)
+        result = subprocess.run([sys.executable, "-m", "pytest", "tests/", "-v"], timeout=180)
         return result.returncode == 0
     except Exception as e:
         print(f"Error running pytest: {e}")

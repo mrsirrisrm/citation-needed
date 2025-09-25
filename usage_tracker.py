@@ -8,17 +8,19 @@ from enum import Enum
 
 class APIProvider(Enum):
     """API providers for tracking"""
+
     OPENROUTER = "openrouter"
     FIRECRAWL = "firecrawl"
     SEARXNG = "searxng"  # Local, so no cost but good to track usage
-    ARXIV = "arxiv"      # Free API
-    DOI = "doi"         # Free API
-    PUBMED = "pubmed"   # Free API
+    ARXIV = "arxiv"  # Free API
+    DOI = "doi"  # Free API
+    PUBMED = "pubmed"  # Free API
 
 
 @dataclass
 class APICall:
     """Represents a single API call"""
+
     provider: APIProvider
     endpoint: str
     timestamp: datetime
@@ -33,6 +35,7 @@ class APICall:
 @dataclass
 class UsageStats:
     """Usage statistics for a time period"""
+
     period_start: datetime
     period_end: datetime
     total_calls: int
@@ -56,22 +59,20 @@ class UsageTracker:
             APIProvider.OPENROUTER: {
                 "input_tokens_per_1k": 0.001,  # $0.001 per 1K input tokens
                 "output_tokens_per_1k": 0.002,  # $0.002 per 1K output tokens
-                "default_cost_per_call": 0.01   # Default cost if tokens not available
+                "default_cost_per_call": 0.01,  # Default cost if tokens not available
             },
             # Firecrawl rates
             APIProvider.FIRECRAWL: {
-                "scrape_per_page": 0.001,       # $0.001 per page scrape
-                "search_per_query": 0.01,       # $0.01 per search query
-                "default_cost_per_call": 0.005
+                "scrape_per_page": 0.001,  # $0.001 per page scrape
+                "search_per_query": 0.01,  # $0.01 per search query
+                "default_cost_per_call": 0.005,
             },
             # SearXNG is free (local instance)
-            APIProvider.SEARXNG: {
-                "default_cost_per_call": 0.0
-            },
+            APIProvider.SEARXNG: {"default_cost_per_call": 0.0},
             # Academic APIs are free
             APIProvider.ARXIV: {"default_cost_per_call": 0.0},
             APIProvider.DOI: {"default_cost_per_call": 0.0},
-            APIProvider.PUBMED: {"default_cost_per_call": 0.0}
+            APIProvider.PUBMED: {"default_cost_per_call": 0.0},
         }
 
         self.load_data()
@@ -84,17 +85,17 @@ class UsageTracker:
                     data = json.load(f)
                     # Convert loaded data back to APICall objects
                     self.calls = []
-                    for call_data in data.get('calls', []):
+                    for call_data in data.get("calls", []):
                         call = APICall(
-                            provider=APIProvider(call_data['provider']),
-                            endpoint=call_data['endpoint'],
-                            timestamp=datetime.fromisoformat(call_data['timestamp']),
-                            duration=call_data['duration'],
-                            success=call_data['success'],
-                            cost_usd=call_data.get('cost_usd', 0.0),
-                            tokens_used=call_data.get('tokens_used', 0),
-                            error_message=call_data.get('error_message'),
-                            metadata=call_data.get('metadata')
+                            provider=APIProvider(call_data["provider"]),
+                            endpoint=call_data["endpoint"],
+                            timestamp=datetime.fromisoformat(call_data["timestamp"]),
+                            duration=call_data["duration"],
+                            success=call_data["success"],
+                            cost_usd=call_data.get("cost_usd", 0.0),
+                            tokens_used=call_data.get("tokens_used", 0),
+                            error_message=call_data.get("error_message"),
+                            metadata=call_data.get("metadata"),
                         )
                         self.calls.append(call)
         except Exception as e:
@@ -105,24 +106,31 @@ class UsageTracker:
         """Save usage data to file"""
         try:
             data = {
-                'calls': [asdict(call) for call in self.calls],
-                'last_updated': datetime.now().isoformat()
+                "calls": [asdict(call) for call in self.calls],
+                "last_updated": datetime.now().isoformat(),
             }
 
             # Convert datetime objects to strings and APIProvider enum to string for
             # JSON serialization
-            for call_data in data['calls']:
-                call_data['timestamp'] = call_data['timestamp'].isoformat()
-                call_data['provider'] = call_data['provider'].value
+            for call_data in data["calls"]:
+                call_data["timestamp"] = call_data["timestamp"].isoformat()
+                call_data["provider"] = call_data["provider"].value
 
-            with open(self.data_file, 'w') as f:
+            with open(self.data_file, "w") as f:
                 json.dump(data, f, indent=2)
         except Exception as e:
             print(f"Warning: Could not save usage data: {e}")
 
-    def track_call(self, provider: APIProvider, endpoint: str, duration: float,
-                   success: bool = True, tokens_used: int = 0,
-                   error_message: str | None = None, metadata: dict | None = None):
+    def track_call(
+        self,
+        provider: APIProvider,
+        endpoint: str,
+        duration: float,
+        success: bool = True,
+        tokens_used: int = 0,
+        error_message: str | None = None,
+        metadata: dict | None = None,
+    ):
         """
         Track an API call
 
@@ -146,7 +154,7 @@ class UsageTracker:
             cost_usd=cost_usd,
             tokens_used=tokens_used,
             error_message=error_message,
-            metadata=metadata or {}
+            metadata=metadata or {},
         )
 
         self.calls.append(call)
@@ -161,8 +169,9 @@ class UsageTracker:
         if cost_usd > 0.01:  # Log calls costing more than 1 cent
             print(f"💰 API call: {provider.value} {endpoint} - ${cost_usd:.4f}")
 
-    def calculate_cost(self, provider: APIProvider, endpoint: str,
-                      tokens_used: int, success: bool) -> float:
+    def calculate_cost(
+        self, provider: APIProvider, endpoint: str, tokens_used: int, success: bool
+    ) -> float:
         """Calculate cost for an API call"""
         if not success:
             return 0.0  # Don't charge for failed calls
@@ -203,10 +212,7 @@ class UsageTracker:
         period_start = now - timedelta(hours=period_hours)
 
         # Filter calls for the period
-        period_calls = [
-            call for call in self.calls
-            if call.timestamp >= period_start
-        ]
+        period_calls = [call for call in self.calls if call.timestamp >= period_start]
 
         if not period_calls:
             return UsageStats(
@@ -219,7 +225,7 @@ class UsageTracker:
                 total_tokens=0,
                 average_duration=0.0,
                 provider_breakdown={},
-                top_endpoints=[]
+                top_endpoints=[],
             )
 
         # Calculate basic stats
@@ -236,24 +242,26 @@ class UsageTracker:
             provider = call.provider.value
             if provider not in provider_stats:
                 provider_stats[provider] = {
-                    'calls': 0,
-                    'successful_calls': 0,
-                    'cost_usd': 0.0,
-                    'tokens_used': 0,
-                    'avg_duration': 0.0
+                    "calls": 0,
+                    "successful_calls": 0,
+                    "cost_usd": 0.0,
+                    "tokens_used": 0,
+                    "avg_duration": 0.0,
                 }
 
-            provider_stats[provider]['calls'] += 1
+            provider_stats[provider]["calls"] += 1
             if call.success:
-                provider_stats[provider]['successful_calls'] += 1
-            provider_stats[provider]['cost_usd'] += call.cost_usd
-            provider_stats[provider]['tokens_used'] += call.tokens_used
+                provider_stats[provider]["successful_calls"] += 1
+            provider_stats[provider]["cost_usd"] += call.cost_usd
+            provider_stats[provider]["tokens_used"] += call.tokens_used
 
         # Calculate average duration per provider
         for provider, stats in provider_stats.items():
             provider_calls = [c for c in period_calls if c.provider.value == provider]
             if provider_calls:
-                stats['avg_duration'] = sum(c.duration for c in provider_calls) / len(provider_calls)
+                stats["avg_duration"] = sum(c.duration for c in provider_calls) / len(
+                    provider_calls
+                )
 
         # Top endpoints by call count
         endpoint_counts = {}
@@ -262,8 +270,10 @@ class UsageTracker:
             endpoint_counts[endpoint_key] = endpoint_counts.get(endpoint_key, 0) + 1
 
         top_endpoints = [
-            {'endpoint': endpoint, 'calls': count}
-            for endpoint, count in sorted(endpoint_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+            {"endpoint": endpoint, "calls": count}
+            for endpoint, count in sorted(
+                endpoint_counts.items(), key=lambda x: x[1], reverse=True
+            )[:10]
         ]
 
         return UsageStats(
@@ -276,7 +286,7 @@ class UsageTracker:
             total_tokens=total_tokens,
             average_duration=average_duration,
             provider_breakdown=provider_stats,
-            top_endpoints=top_endpoints
+            top_endpoints=top_endpoints,
         )
 
     def get_daily_stats(self) -> UsageStats:
@@ -293,10 +303,14 @@ class UsageTracker:
 
     def print_summary(self, stats: UsageStats):
         """Print a human-readable summary of usage stats"""
-        print(f"\n📊 Usage Summary ({stats.period_start.strftime('%Y-%m-%d %H:%M')} - {stats.period_end.strftime('%Y-%m-%d %H:%M')})")
+        print(
+            f"\n📊 Usage Summary ({stats.period_start.strftime('%Y-%m-%d %H:%M')} - {stats.period_end.strftime('%Y-%m-%d %H:%M')})"
+        )
         print("=" * 80)
         print(f"Total Calls: {stats.total_calls}")
-        print(f"Successful: {stats.successful_calls} ({stats.successful_calls/max(1, stats.total_calls)*100:.1f}%)")
+        print(
+            f"Successful: {stats.successful_calls} ({stats.successful_calls / max(1, stats.total_calls) * 100:.1f}%)"
+        )
         print(f"Failed: {stats.failed_calls}")
         print(f"Total Cost: ${stats.total_cost_usd:.4f}")
         print(f"Total Tokens: {stats.total_tokens:,}")
@@ -305,10 +319,14 @@ class UsageTracker:
         if stats.provider_breakdown:
             print("\n🏢 Provider Breakdown:")
             for provider, provider_stats in stats.provider_breakdown.items():
-                success_rate = provider_stats['successful_calls'] / max(1, provider_stats['calls']) * 100
-                print(f"  {provider.upper()}: {provider_stats['calls']} calls, "
-                      f"${provider_stats['cost_usd']:.4f}, "
-                      f"{success_rate:.1f}% success")
+                success_rate = (
+                    provider_stats["successful_calls"] / max(1, provider_stats["calls"]) * 100
+                )
+                print(
+                    f"  {provider.upper()}: {provider_stats['calls']} calls, "
+                    f"${provider_stats['cost_usd']:.4f}, "
+                    f"{success_rate:.1f}% success"
+                )
 
         if stats.top_endpoints:
             print("\n🔝 Top Endpoints:")
@@ -320,28 +338,35 @@ class UsageTracker:
         import csv
 
         period_start = datetime.now() - timedelta(hours=period_hours)
-        period_calls = [
-            call for call in self.calls
-            if call.timestamp >= period_start
-        ]
+        period_calls = [call for call in self.calls if call.timestamp >= period_start]
 
-        with open(filename, 'w', newline='') as csvfile:
-            fieldnames = ['timestamp', 'provider', 'endpoint', 'duration', 'success',
-                         'cost_usd', 'tokens_used', 'error_message']
+        with open(filename, "w", newline="") as csvfile:
+            fieldnames = [
+                "timestamp",
+                "provider",
+                "endpoint",
+                "duration",
+                "success",
+                "cost_usd",
+                "tokens_used",
+                "error_message",
+            ]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
             writer.writeheader()
             for call in period_calls:
-                writer.writerow({
-                    'timestamp': call.timestamp.isoformat(),
-                    'provider': call.provider.value,
-                    'endpoint': call.endpoint,
-                    'duration': call.duration,
-                    'success': call.success,
-                    'cost_usd': call.cost_usd,
-                    'tokens_used': call.tokens_used,
-                    'error_message': call.error_message or ''
-                })
+                writer.writerow(
+                    {
+                        "timestamp": call.timestamp.isoformat(),
+                        "provider": call.provider.value,
+                        "endpoint": call.endpoint,
+                        "duration": call.duration,
+                        "success": call.success,
+                        "cost_usd": call.cost_usd,
+                        "tokens_used": call.tokens_used,
+                        "error_message": call.error_message or "",
+                    }
+                )
 
         print(f"📁 Exported {len(period_calls)} calls to {filename}")
 
@@ -350,9 +375,15 @@ class UsageTracker:
 usage_tracker = UsageTracker()
 
 
-def track_api_call(provider: APIProvider, endpoint: str, duration: float,
-                  success: bool = True, tokens_used: int = 0,
-                  error_message: str | None = None, metadata: dict | None = None):
+def track_api_call(
+    provider: APIProvider,
+    endpoint: str,
+    duration: float,
+    success: bool = True,
+    tokens_used: int = 0,
+    error_message: str | None = None,
+    metadata: dict | None = None,
+):
     """Convenience function to track API calls"""
     usage_tracker.track_call(
         provider=provider,
@@ -361,7 +392,7 @@ def track_api_call(provider: APIProvider, endpoint: str, duration: float,
         success=success,
         tokens_used=tokens_used,
         error_message=error_message,
-        metadata=metadata
+        metadata=metadata,
     )
 
 
@@ -393,11 +424,11 @@ class UsageTrackerDecorator:
                 # Try to extract tokens from result if it's an LLM call
                 if success and result:
                     try:
-                        if hasattr(result, 'usage'):
+                        if hasattr(result, "usage"):
                             # OpenAI-style usage
-                            tokens_used = result.usage.get('total_tokens', 0)
-                        elif isinstance(result, dict) and 'usage' in result:
-                            tokens_used = result.get('usage', {}).get('total_tokens', 0)
+                            tokens_used = result.usage.get("total_tokens", 0)
+                        elif isinstance(result, dict) and "usage" in result:
+                            tokens_used = result.get("usage", {}).get("total_tokens", 0)
                     except Exception:
                         pass
 
@@ -407,7 +438,7 @@ class UsageTrackerDecorator:
                     duration=duration,
                     success=success,
                     tokens_used=tokens_used,
-                    error_message=error_message
+                    error_message=error_message,
                 )
 
         return wrapper

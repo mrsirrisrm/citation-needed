@@ -1,12 +1,11 @@
 import os
 from dataclasses import dataclass
-from typing import Any, List
-import json
+from typing import Any
 
 import dspy
 
-from .ner_extractor import Citation
 from .citation_parser import StructuredCitation, create_citation_parser
+from .ner_extractor import Citation
 
 
 @dataclass
@@ -81,7 +80,9 @@ class FactChecker:
             print(f"⚠️  Citation parser initialization failed: {e}")
             self.citation_parser = None
 
-    def fact_check_citations(self, citations: list[Citation], progress_callback=None) -> list[FactCheckResult]:
+    def fact_check_citations(
+        self, citations: list[Citation], progress_callback=None
+    ) -> list[FactCheckResult]:
         """
         Fact-check a list of citations
 
@@ -134,8 +135,12 @@ class FactChecker:
         if self.citation_parser:
             try:
                 structured_citation = self.citation_parser.parse_citation(citation.text)
-                print(f"📋 Parsed citation: {structured_citation.first_author} ({structured_citation.year}) - {structured_citation.title[:50]}...")
-                print(f"📊 Extraction method: {structured_citation.extraction_method}, confidence: {structured_citation.confidence:.2f}")
+                print(
+                    f"📋 Parsed citation: {structured_citation.first_author} ({structured_citation.year}) - {structured_citation.title[:50]}..."
+                )
+                print(
+                    f"📊 Extraction method: {structured_citation.extraction_method}, confidence: {structured_citation.confidence:.2f}"
+                )
             except Exception as e:
                 print(f"⚠️  Structured parsing failed: {e}")
 
@@ -144,8 +149,10 @@ class FactChecker:
         if self.search_client:
             if structured_citation:
                 # Use smart search with structured citation
-                if hasattr(self.search_client, 'smart_citation_search'):
-                    sources_found = self.search_client.smart_citation_search(structured_citation, citation.text)
+                if hasattr(self.search_client, "smart_citation_search"):
+                    sources_found = self.search_client.smart_citation_search(
+                        structured_citation, citation.text
+                    )
                 else:
                     # Fallback to enhanced search
                     citation_dict = {
@@ -158,7 +165,9 @@ class FactChecker:
                         "arxiv_id": structured_citation.arxiv_id,
                         "pmid": structured_citation.pmid,
                     }
-                    sources_found = self.search_client.enhanced_citation_search(citation.text, citation_dict)
+                    sources_found = self.search_client.enhanced_citation_search(
+                        citation.text, citation_dict
+                    )
             else:
                 # Fallback to old method
                 search_queries = self._generate_search_queries(citation)
@@ -166,7 +175,9 @@ class FactChecker:
                     sources_found = self._search_for_sources(search_queries)
 
         # Step 3: Verify against found sources
-        verification_result = self._verify_citation_enhanced(citation, sources_found, structured_citation)
+        verification_result = self._verify_citation_enhanced(
+            citation, sources_found, structured_citation
+        )
 
         # Generate search queries for logging
         if structured_citation:
@@ -240,7 +251,10 @@ class FactChecker:
         return unique_sources[:5]  # Return top 5 unique sources
 
     def _verify_citation_enhanced(
-        self, citation: Citation, sources: list[dict[str, str]], structured_citation: StructuredCitation = None
+        self,
+        citation: Citation,
+        sources: list[dict[str, str]],
+        structured_citation: StructuredCitation = None,
     ) -> dict[str, Any]:
         """Verify citation against found sources with enhanced matching"""
 
@@ -306,7 +320,9 @@ class FactChecker:
                 "explanation": "No strong matches found in search results",
             }
 
-    def _calculate_match_score(self, structured_citation: StructuredCitation, source: dict[str, str]) -> float:
+    def _calculate_match_score(
+        self, structured_citation: StructuredCitation, source: dict[str, str]
+    ) -> float:
         """Calculate match score between structured citation and source"""
 
         score = 0.0
@@ -356,7 +372,7 @@ class FactChecker:
 
         # Boost score based on source confidence
         source_confidence = source.get("confidence", 0.5)
-        score *= (0.5 + source_confidence * 0.5)  # Scale by source reliability
+        score *= 0.5 + source_confidence * 0.5  # Scale by source reliability
 
         return score / max_score if max_score > 0 else 0.0
 

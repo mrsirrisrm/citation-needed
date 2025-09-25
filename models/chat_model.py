@@ -68,10 +68,12 @@ class ChatModel:
 
             # Try to extract token usage
             try:
-                if hasattr(result, '__dict__') and hasattr(result.__dict__.get('_lm', {}), 'n_tokens'):
-                    tokens_used = result.__dict__['_lm']['n_tokens']
-                elif hasattr(self.lm, 'last_usage'):
-                    tokens_used = self.lm.last_usage.get('total_tokens', 0)
+                if hasattr(result, "__dict__") and hasattr(
+                    result.__dict__.get("_lm", {}), "n_tokens"
+                ):
+                    tokens_used = result.__dict__["_lm"]["n_tokens"]
+                elif hasattr(self.lm, "last_usage"):
+                    tokens_used = self.lm.last_usage.get("total_tokens", 0)
             except Exception:
                 pass  # Token extraction failed, but call was successful
 
@@ -94,8 +96,8 @@ class ChatModel:
                 metadata={
                     "model": self.chat_model_name,
                     "message_length": len(message),
-                    "history_length": len(history) if history else 0
-                }
+                    "history_length": len(history) if history else 0,
+                },
             )
 
     def validate_setup(self) -> bool:

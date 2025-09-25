@@ -6,17 +6,18 @@ Tests how the fact-checking system handles completely fabricated citations
 
 import os
 import sys
-from unittest.mock import Mock, patch
+
 from dotenv import load_dotenv
+
 
 # Add the current directory to the path
 sys.path.insert(0, os.path.dirname(__file__))
 
 # Import our components
+from models.fact_checker import create_fact_checker
 from models.ner_extractor import create_ner_extractor
 from search.firecrawl_client import create_search_client
-from models.fact_checker import create_fact_checker
-from models.chat_model import ChatModel
+
 
 # Load environment variables
 load_dotenv()
@@ -124,7 +125,9 @@ def test_hallucinated_citations():
 
                 if use_mock_search:
                     # With mock search, we expect no sources to be found
-                    print("   Using mock search - should find no valid sources for hallucinated citations")
+                    print(
+                        "   Using mock search - should find no valid sources for hallucinated citations"
+                    )
                     fact_results = fact_checker.fact_check_citations(citations)
 
                     if fact_results:
@@ -137,16 +140,19 @@ def test_hallucinated_citations():
 
                             # Check if hallucination was detected
                             is_flagged_as_problematic = (
-                                result.verification_status in ["NOT_FOUND", "UNRELIABLE", "DISPUTED"] or
-                                result.confidence < 0.5 or
-                                len(result.sources_found) == 0
+                                result.verification_status
+                                in ["NOT_FOUND", "UNRELIABLE", "DISPUTED"]
+                                or result.confidence < 0.5
+                                or len(result.sources_found) == 0
                             )
 
                             if not is_flagged_as_problematic:
-                                print(f"     ⚠️  WARNING: Hallucinated citation not properly flagged!")
+                                print(
+                                    "     ⚠️  WARNING: Hallucinated citation not properly flagged!"
+                                )
                                 all_hallucinations_detected = False
                             else:
-                                print(f"     ✅ Correctly identified as problematic")
+                                print("     ✅ Correctly identified as problematic")
 
                 else:
                     # With real search, test with a smaller subset
@@ -162,16 +168,20 @@ def test_hallucinated_citations():
 
                         # Real search should also fail to verify hallucinated citations
                         if result.verification_status == "VERIFIED" and result.confidence > 0.7:
-                            print(f"     ⚠️  WARNING: Real search unexpectedly verified hallucinated citation!")
+                            print(
+                                "     ⚠️  WARNING: Real search unexpectedly verified hallucinated citation!"
+                            )
                             all_hallucinations_detected = False
                         else:
-                            print(f"     ✅ Real search correctly could not verify hallucinated citation")
+                            print(
+                                "     ✅ Real search correctly could not verify hallucinated citation"
+                            )
 
             else:
                 print("   ❌ No citations detected - this might indicate an issue with NER")
                 all_hallucinations_detected = False
 
-            print("\n" + "="*60 + "\n")
+            print("\n" + "=" * 60 + "\n")
 
         # Summary
         if all_hallucinations_detected:
@@ -188,6 +198,7 @@ def test_hallucinated_citations():
     except Exception as e:
         print(f"❌ Test failed with exception: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -205,28 +216,28 @@ def test_edge_cases():
             {
                 "name": "Fake arXiv ID",
                 "text": "According to the paper available at https://arxiv.org/abs/9999.99999, AI has achieved consciousness.",
-                "expectation": "Should detect arXiv pattern but fail to verify"
+                "expectation": "Should detect arXiv pattern but fail to verify",
             },
             {
                 "name": "Non-existent DOI",
                 "text": "The study with DOI 10.1000/fake.doi.here shows impossible results.",
-                "expectation": "Should detect DOI pattern but fail to verify"
+                "expectation": "Should detect DOI pattern but fail to verify",
             },
             {
                 "name": "Fictional journal",
                 "text": "Smith et al. (2024) published in the Journal of Made-Up Science that 2+2=5.",
-                "expectation": "Should detect citation but journal doesn't exist"
+                "expectation": "Should detect citation but journal doesn't exist",
             },
             {
                 "name": "Real authors, fake paper",
                 "text": "Einstein and Newton (2023) collaborated on a paper about time travel.",
-                "expectation": "Authors exist but timeframe is impossible"
+                "expectation": "Authors exist but timeframe is impossible",
             },
             {
                 "name": "Mixed real and fake",
                 "text": "The transformer architecture (Vaswani et al., 2017) was improved by the FakeNet model (Fictional et al., 2024).",
-                "expectation": "First citation real, second is fake"
-            }
+                "expectation": "First citation real, second is fake",
+            },
         ]
 
         for case in edge_cases:
@@ -234,7 +245,7 @@ def test_edge_cases():
             print(f"   Text: {case['text']}")
             print(f"   Expected: {case['expectation']}")
 
-            citations = ner_extractor.extract_citations(case['text'])
+            citations = ner_extractor.extract_citations(case["text"])
             print(f"   NER found: {len(citations)} citations")
 
             for citation in citations:
@@ -249,18 +260,24 @@ def test_edge_cases():
 if __name__ == "__main__":
     print("🚀 Starting Hallucination Detection Tests")
     print("This test uses a mock chat model that generates responses with fabricated citations.")
-    print("The goal is to verify that the fact-checking system correctly identifies these as unreliable.\n")
+    print(
+        "The goal is to verify that the fact-checking system correctly identifies these as unreliable.\n"
+    )
 
     success = test_hallucinated_citations()
     test_edge_cases()
 
     if success:
-        print("\n🎯 CONCLUSION: The fact-checking system successfully detects hallucinated citations!")
+        print(
+            "\n🎯 CONCLUSION: The fact-checking system successfully detects hallucinated citations!"
+        )
         print("\n💡 Key findings:")
         print("   • Fabricated papers are correctly flagged as NOT_FOUND or UNRELIABLE")
         print("   • Confidence scores are appropriately low for non-existent sources")
         print("   • The system provides explanatory feedback about failed verifications")
         print("   • Both mock and real search clients handle hallucinations appropriately")
     else:
-        print("\n⚠️  CONCLUSION: The fact-checking system may need improvements for hallucination detection.")
+        print(
+            "\n⚠️  CONCLUSION: The fact-checking system may need improvements for hallucination detection."
+        )
         sys.exit(1)

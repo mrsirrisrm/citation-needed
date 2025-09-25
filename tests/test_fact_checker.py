@@ -2,13 +2,16 @@
 """
 Tests for the fact-checking component
 """
-import pytest
+
 import os
+
+import pytest
 from dotenv import load_dotenv
 
-from models.fact_checker import create_fact_checker, FactCheckResult
+from models.fact_checker import FactCheckResult, create_fact_checker
 from models.ner_extractor import Citation
 from search.firecrawl_client import create_search_client
+
 
 load_dotenv()
 
@@ -31,7 +34,7 @@ class TestFactChecker:
                 citation_type="author_year",
                 confidence=0.9,
                 authors=["Smith"],
-                year="2023"
+                year="2023",
             ),
             Citation(
                 text="DOI: 10.1038/nature12345",
@@ -39,14 +42,10 @@ class TestFactChecker:
                 end=25,
                 citation_type="doi",
                 confidence=0.99,
-                doi="10.1038/nature12345"
+                doi="10.1038/nature12345",
             ),
             Citation(
-                text="arXiv:1706.03762",
-                start=0,
-                end=16,
-                citation_type="preprint",
-                confidence=0.99
+                text="arXiv:1706.03762", start=0, end=16, citation_type="preprint", confidence=0.99
             ),
         ]
 
@@ -73,12 +72,12 @@ class TestFactChecker:
             citation_type="author_year",
             confidence=0.9,
             authors=["Vaswani"],
-            year="2017"
+            year="2017",
         )
 
         result = self.fact_checker._fact_check_single_citation(citation)
 
-        print(f"\nMock fact-check result:")
+        print("\nMock fact-check result:")
         print(f"  Citation: {citation.text}")
         print(f"  Status: {result.verification_status}")
         print(f"  Confidence: {result.confidence}")
@@ -89,7 +88,7 @@ class TestFactChecker:
         # Verify result structure
         assert isinstance(result, FactCheckResult)
         assert result.citation == citation
-        assert result.verification_status in ['verified', 'not_found', 'contradicted', 'error']
+        assert result.verification_status in ["verified", "not_found", "contradicted", "error"]
         assert 0.0 <= result.confidence <= 1.0
         assert isinstance(result.sources_found, list)
         assert isinstance(result.explanation, str)
@@ -103,34 +102,34 @@ class TestFactChecker:
                 start=0,
                 end=18,
                 citation_type="author_year",
-                confidence=0.9
+                confidence=0.9,
             ),
             Citation(
                 text="Jones and Brown (2022)",
                 start=50,
                 end=72,
                 citation_type="author_year",
-                confidence=0.85
+                confidence=0.85,
             ),
             Citation(
                 text="DOI: 10.1038/nature12345",
                 start=100,
                 end=125,
                 citation_type="doi",
-                confidence=0.99
+                confidence=0.99,
             ),
         ]
 
         results = self.fact_checker.fact_check_citations(citations)
 
-        print(f"\nMultiple citations fact-check:")
+        print("\nMultiple citations fact-check:")
         print(f"Input citations: {len(citations)}")
         print(f"Results: {len(results)}")
 
         assert len(results) == len(citations), "Mismatch in results count"
 
         for i, result in enumerate(results):
-            print(f"  {i+1}. {result.citation.text} -> {result.verification_status}")
+            print(f"  {i + 1}. {result.citation.text} -> {result.verification_status}")
             assert result.citation == citations[i], "Citation mismatch in results"
 
     def test_famous_papers_fact_check(self):
@@ -144,9 +143,9 @@ class TestFactChecker:
                     citation_type="author_year",
                     confidence=0.9,
                     authors=["Vaswani"],
-                    year="2017"
+                    year="2017",
                 ),
-                "description": "Attention Is All You Need (Transformer paper)"
+                "description": "Attention Is All You Need (Transformer paper)",
             },
             {
                 "citation": Citation(
@@ -156,9 +155,9 @@ class TestFactChecker:
                     citation_type="author_year",
                     confidence=0.9,
                     authors=["Devlin"],
-                    year="2018"
+                    year="2018",
                 ),
-                "description": "BERT paper"
+                "description": "BERT paper",
             },
             {
                 "citation": Citation(
@@ -166,9 +165,9 @@ class TestFactChecker:
                     start=0,
                     end=16,
                     citation_type="preprint",
-                    confidence=0.99
+                    confidence=0.99,
                 ),
-                "description": "Transformer paper arXiv"
+                "description": "Transformer paper arXiv",
             },
         ]
 
@@ -184,7 +183,9 @@ class TestFactChecker:
             assert len(result.search_queries_used) > 0, "No search queries generated"
 
             # Should complete without errors
-            assert result.verification_status != 'error', f"Error in fact-checking: {result.explanation}"
+            assert result.verification_status != "error", (
+                f"Error in fact-checking: {result.explanation}"
+            )
 
     def test_error_handling_fact_check(self):
         """Test error handling in fact-checking"""
@@ -194,14 +195,14 @@ class TestFactChecker:
                 start=0,
                 end=0,
                 citation_type="unknown",
-                confidence=0.1
+                confidence=0.1,
             ),
             Citation(
                 text="Invalid citation format",
                 start=0,
                 end=24,
                 citation_type="unknown",
-                confidence=0.2
+                confidence=0.2,
             ),
         ]
 
@@ -209,7 +210,7 @@ class TestFactChecker:
             try:
                 result = self.fact_checker._fact_check_single_citation(citation)
 
-                print(f"\nError handling test:")
+                print("\nError handling test:")
                 print(f"  Citation: '{citation.text}'")
                 print(f"  Status: {result.verification_status}")
 
@@ -232,9 +233,9 @@ class TestFactChecker:
                     confidence=0.95,
                     authors=["Vaswani", "Shazeer", "Parmar"],
                     year="2017",
-                    title="Attention is all you need"
+                    title="Attention is all you need",
                 ),
-                "expected_terms": ["Vaswani", "2017", "attention", "transformer"]
+                "expected_terms": ["Vaswani", "2017", "attention", "transformer"],
             },
             {
                 "citation": Citation(
@@ -243,16 +244,16 @@ class TestFactChecker:
                     end=25,
                     citation_type="doi",
                     confidence=0.99,
-                    doi="10.1038/nature14539"
+                    doi="10.1038/nature14539",
                 ),
-                "expected_terms": ["doi", "10.1038/nature14539"]
+                "expected_terms": ["doi", "10.1038/nature14539"],
             },
         ]
 
         for case in test_cases:
             queries = self.fact_checker._generate_search_queries(case["citation"])
 
-            print(f"\nQuery quality test:")
+            print("\nQuery quality test:")
             print(f"  Citation: {case['citation'].text[:50]}...")
             print(f"  Generated queries: {queries}")
 
@@ -260,8 +261,9 @@ class TestFactChecker:
             all_queries_text = " ".join(queries).lower()
 
             for term in case["expected_terms"]:
-                assert term.lower() in all_queries_text, \
+                assert term.lower() in all_queries_text, (
                     f"Expected term '{term}' not found in queries: {queries}"
+                )
 
     @pytest.mark.skipif(not os.getenv("OPENROUTER_API_KEY"), reason="No OpenRouter API key")
     def test_real_llm_fact_check(self):
@@ -273,17 +275,13 @@ class TestFactChecker:
         real_fact_checker = create_fact_checker(self.search_client)
 
         citation = Citation(
-            text="Smith et al. (2023)",
-            start=0,
-            end=18,
-            citation_type="author_year",
-            confidence=0.9
+            text="Smith et al. (2023)", start=0, end=18, citation_type="author_year", confidence=0.9
         )
 
         try:
             result = real_fact_checker._fact_check_single_citation(citation)
 
-            print(f"\nReal LLM fact-check:")
+            print("\nReal LLM fact-check:")
             print(f"  Citation: {citation.text}")
             print(f"  Status: {result.verification_status}")
             print(f"  Explanation: {result.explanation[:100]}...")
@@ -302,7 +300,9 @@ class TestFactChecker:
         # Test with no search client
         no_search_fact_checker = create_fact_checker(None)
         # Should still validate (will use fallback behavior)
-        assert no_search_fact_checker.validate_setup(), "Fact-checker without search should still validate"
+        assert no_search_fact_checker.validate_setup(), (
+            "Fact-checker without search should still validate"
+        )
 
 
 if __name__ == "__main__":

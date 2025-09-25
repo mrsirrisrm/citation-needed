@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 # Load environment variables
 load_dotenv()
 
+
 def test_usage_tracking():
     """Test the usage tracking system"""
     print("🧪 Usage Tracking Test")
@@ -35,7 +36,7 @@ def test_usage_tracking():
             duration=1.5,
             success=True,
             tokens_used=250,
-            metadata={"model": "gpt-4", "test": True}
+            metadata={"model": "gpt-4", "test": True},
         )
 
         track_api_call(
@@ -43,7 +44,7 @@ def test_usage_tracking():
             endpoint="search",
             duration=2.3,
             success=True,
-            metadata={"query": "test query", "results": 5}
+            metadata={"query": "test query", "results": 5},
         )
 
         track_api_call(
@@ -51,7 +52,7 @@ def test_usage_tracking():
             endpoint="search",
             duration=0.8,
             success=True,
-            metadata={"query": "academic search", "results": 3}
+            metadata={"query": "academic search", "results": 3},
         )
 
         # Test a failed call
@@ -61,7 +62,7 @@ def test_usage_tracking():
             duration=5.0,
             success=False,
             error_message="Timeout",
-            metadata={"url": "https://example.com"}
+            metadata={"url": "https://example.com"},
         )
 
         print("✅ Test API calls tracked")
@@ -86,10 +87,12 @@ def test_usage_tracking():
     except Exception as e:
         print(f"❌ Usage tracking test failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
     return True
+
 
 def test_integration_with_components():
     """Test integration with existing components"""
@@ -125,6 +128,7 @@ def test_integration_with_components():
 
     return True
 
+
 def show_usage_data():
     """Show the current usage data"""
     print("\n📋 Current Usage Data")
@@ -143,10 +147,13 @@ def show_usage_data():
         for call in usage_tracker.calls[-5:]:  # Show last 5 calls
             status = "✅" if call.success else "❌"
             cost = f"${call.cost_usd:.4f}" if call.cost_usd > 0 else "Free"
-            print(f"  {status} {call.provider.value} {call.endpoint} - {cost} ({call.duration:.2f}s)")
+            print(
+                f"  {status} {call.provider.value} {call.endpoint} - {cost} ({call.duration:.2f}s)"
+            )
 
     except Exception as e:
         print(f"Error showing usage data: {e}")
+
 
 if __name__ == "__main__":
     print("🔧 Testing Usage Tracking for Citation Needed")
