@@ -12,6 +12,10 @@ from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Import our components
 from models.chat_model import create_chat_model
@@ -39,7 +43,6 @@ class TaskStatusResponse(BaseModel):
     completed: bool
     error: Optional[str] = None
     result: Optional[Dict[str, Any]] = None
-    partial_panel: Optional[str] = None
     has_partial: bool = False
 
 class SystemStatusResponse(BaseModel):
@@ -246,10 +249,6 @@ class CitationAPI:
 
             task_data['partial_results'].append(partial_result)
 
-            # Create a real-time update panel
-            partial_panel = self._create_partial_results_panel(task_data['partial_results'], progress)
-            task_data['partial_panel'] = partial_panel
-
     def _on_fact_check_complete(self, task_id: str, fact_check_results: list = None, error: str = None):
         """Callback when async fact-checking completes"""
         print(f"Async fact-checking completed for task {task_id}")
@@ -288,114 +287,8 @@ class CitationAPI:
             except Exception as e:
                 print(f"Error formatting async fact-check results: {e}")
 
-    def _create_partial_results_panel(self, partial_results: list, progress: float) -> str:
-        """Create HTML for partial results panel showing real-time progress"""
-        if not partial_results:
-            return ""
-
-        panel_html = f"""
-        <div class="fact-check-partial">
-            <div class="progress-header">
-                <div class="progress-text">
-                    🔄 Fact-checking in progress: {len(partial_results)} of {len(partial_results) + int((1 - progress) * 10)} citations completed
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: {progress * 100}%"></div>
-                </div>
-            </div>
-            <div class="partial-results">
-        """
-
-        # Show completed results
-        for i, result in enumerate(partial_results):
-            citation_id = f"partial_{i + 1}"
-            comment_html = self._create_partial_citation_comment(citation_id, result)
-            panel_html += comment_html
-
-        panel_html += """
-            </div>
-        </div>
-        """
-
-        return panel_html
-
-    def _create_partial_citation_comment(self, citation_id: str, result) -> str:
-        """Create HTML for a partial citation comment"""
-        import html
-
-        citation_display = result.citation.text
-        if len(citation_display) > 60:
-            citation_display = citation_display[:57] + "..."
-
-        status_class = self._get_status_class(result.verification_status)
-        status_display = self._get_status_display(result.verification_status)
-
-        # Create sources HTML
-        sources_html = ""
-        if result.sources_found:
-            sources_html = '<div class="comment-sources">'
-            sources_html += '<div class="sources-title">Sources Found:</div>'
-
-            for source in result.sources_found[:3]:
-                title = html.escape(source.get("title", "Untitled")[:50])
-                url = html.escape(source.get("url", ""))
-
-                sources_html += f"""
-                <div class="source-item">
-                    <a href="{url}" target="_blank" class="source-title" rel="noopener noreferrer">
-                        {title}
-                    </a>
-                    <div class="source-url">{url}</div>
-                </div>
-                """
-
-            sources_html += "</div>"
-
-        comment_html = f"""
-        <div class="citation-comment partial-result" data-citation-id="{citation_id}">
-            <div class="comment-header">
-                <div class="comment-citation-text">{html.escape(citation_display)}</div>
-                <div class="comment-status">
-                    <span class="status-badge {status_class}">{status_display}</span>
-                    <span class="partial-badge">✓</span>
-                </div>
-            </div>
-            <div class="comment-content" id="content_{citation_id}">
-                <div class="comment-explanation">
-                    {html.escape(result.explanation)}
-                </div>
-                {sources_html}
-                <div class="confidence-score">
-                    Confidence: {result.confidence:.1%}
-                </div>
-            </div>
-        </div>
-        """
-
-        return comment_html
-
-    def _get_status_class(self, status: str) -> str:
-        """Get CSS class for verification status"""
-        status_classes = {
-            "verified": "status-verified citation-verified",
-            "not_found": "status-not-found citation-not-found",
-            "contradicted": "status-contradicted citation-contradicted",
-            "error": "status-error citation-error",
-            "partial": "status-not-found citation-not-found",
-        }
-        return status_classes.get(status, "status-error citation-error")
-
-    def _get_status_display(self, status: str) -> str:
-        """Get display text for verification status"""
-        status_displays = {
-            "verified": "Verified",
-            "not_found": "Not Found",
-            "contradicted": "Contradicted",
-            "error": "Error",
-            "partial": "Partial",
-        }
-        return status_displays.get(status, "Unknown")
-
+    
+    
     def get_task_status(self, task_id: str) -> dict:
         """Get status of an async task"""
         if task_id not in self.pending_tasks:
@@ -414,13 +307,9 @@ class CitationAPI:
 
         # Include partial results if available
         task_data = self.pending_tasks.get(task_id, {})
-        partial_panel = task_data.get('partial_panel')
+        partial_results = task_data.get('partial_results', [])
 
-        if partial_panel:
-            response['partial_panel'] = partial_panel
-            response['has_partial'] = True
-        else:
-            response['has_partial'] = False
+        response['has_partial'] = len(partial_results) > 0
 
         # Include final result if completed
         if task.status == TaskStatus.COMPLETED and 'fact_check_results' in task_data:
