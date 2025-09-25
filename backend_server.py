@@ -177,7 +177,7 @@ class CitationAPI:
                         "text": citation.text,
                         "start": citation.start,
                         "end": citation.end,
-                        "type": citation.type,
+                        "type": citation.citation_type,
                         "confidence": citation.confidence
                     })
             except Exception as e:
@@ -209,7 +209,7 @@ class CitationAPI:
                             text=cit_dict['text'],
                             start=cit_dict['start'],
                             end=cit_dict['end'],
-                            type=cit_dict['type'],
+                            citation_type=cit_dict['type'],
                             confidence=cit_dict['confidence']
                         )
                         citation_objects.append(citation)
@@ -268,7 +268,7 @@ class CitationAPI:
                             "text": result.citation.text,
                             "start": result.citation.start,
                             "end": result.citation.end,
-                            "type": result.citation.type,
+                            "type": result.citation.citation_type,
                             "confidence": result.citation.confidence
                         },
                         "verification_status": result.verification_status,
