@@ -1068,7 +1068,1147 @@
         "message_length": 30,
         "history_length": 0
       }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:17:03.603634",
+      "duration": 0.006169795989990234,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:17:04.215255",
+      "duration": 0.0007281303405761719,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:17:49.424647",
+      "duration": 14.564441919326782,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 62,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:21:03.029650",
+      "duration": 0.0037970542907714844,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:21:03.621327",
+      "duration": 0.0008420944213867188,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:35:02.135835",
+      "duration": 0.008522748947143555,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:35:03.006800",
+      "duration": 0.0007801055908203125,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:35:13.625487",
+      "duration": 0.027205228805541992,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 62,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:36:22.203281",
+      "duration": 0.0026051998138427734,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:36:23.029059",
+      "duration": 0.0007779598236083984,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:37:14.754909",
+      "duration": 0.004773139953613281,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:37:15.572283",
+      "duration": 0.0007879734039306641,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:41:28.715287",
+      "duration": 12.299739122390747,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 54,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:42:22.857127",
+      "duration": 0.007248878479003906,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:42:23.453467",
+      "duration": 0.0007722377777099609,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:42:29.066063",
+      "duration": 0.024487972259521484,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 54,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:43:58.472337",
+      "duration": 0.009242057800292969,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:43:59.100367",
+      "duration": 0.0008480548858642578,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:44:35.481144",
+      "duration": 0.0372769832611084,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:44:36.122091",
+      "duration": 0.013477802276611328,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:46:45.441592",
+      "duration": 0.0035789012908935547,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:46:46.044773",
+      "duration": 0.0007841587066650391,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:48:07.512245",
+      "duration": 0.006214141845703125,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:48:08.105841",
+      "duration": 0.000762939453125,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:48:14.425522",
+      "duration": 0.02399611473083496,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 54,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:50:12.910907",
+      "duration": 0.004092216491699219,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:50:13.522064",
+      "duration": 0.0007851123809814453,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:50:19.042266",
+      "duration": 0.02520608901977539,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 54,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:52:23.692818",
+      "duration": 0.0043299198150634766,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:52:24.301000",
+      "duration": 0.0007650852203369141,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-24T08:52:30.202185",
+      "duration": 0.02426624298095703,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 54,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:36:38.664856",
+      "duration": 0.0041141510009765625,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:36:39.657389",
+      "duration": 0.0007398128509521484,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:38:19.840590",
+      "duration": 0.005445957183837891,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:38:20.617502",
+      "duration": 0.0007460117340087891,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:44:30.250060",
+      "duration": 0.012312173843383789,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:44:31.108022",
+      "duration": 0.0008230209350585938,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:46:13.186689",
+      "duration": 0.007049083709716797,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:46:13.998263",
+      "duration": 0.0007228851318359375,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:47:04.146619",
+      "duration": 0.00643610954284668,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:47:04.751663",
+      "duration": 0.0007290840148925781,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:49:21.607051",
+      "duration": 0.006938934326171875,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T19:49:22.383684",
+      "duration": 0.0007309913635253906,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:23:24.874817",
+      "duration": 0.007449150085449219,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:23:31.126274",
+      "duration": 0.026546955108642578,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 4,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:23:41.215058",
+      "duration": 0.005501985549926758,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 4,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:24:24.534016",
+      "duration": 14.771595001220703,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "litellm.APIError: APIError: OpenAIException - Insufficient credits. Add more using https://openrouter.ai/settings/credits",
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 53,
+        "history_length": 1
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:27:47.569043",
+      "duration": 8.091513872146606,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 53,
+        "history_length": 2
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:28:10.316355",
+      "duration": 0.008805990219116211,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:28:45.124056",
+      "duration": 18.2149760723114,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 58,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:33:53.795291",
+      "duration": 0.013634920120239258,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:34:12.764269",
+      "duration": 0.060842037200927734,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:34:13.829861",
+      "duration": 0.007298946380615234,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:34:16.559075",
+      "duration": 0.006506919860839844,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 58,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:36:56.997640",
+      "duration": 0.0031838417053222656,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:36:57.816546",
+      "duration": 0.011221885681152344,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:39:28.860798",
+      "duration": 0.01774001121520996,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-25T20:39:29.918862",
+      "duration": 0.011982202529907227,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:45:22.990948",
+      "duration": 0.49163293838500977,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "Einstein 2023 \"Deep Neural Networks for Quantum Computing\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:45:23.382706",
+      "duration": 0.3832540512084961,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "\"Deep Neural Networks for Quantum Computing\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:45:23.755468",
+      "duration": 0.36064696311950684,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "Einstein 2023",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:45:25.724220",
+      "duration": 0.4038081169128418,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "Fake 2024 \"Global Warming Solved by AI\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:45:26.056219",
+      "duration": 0.3200068473815918,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "\"Global Warming Solved by AI\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:45:26.369082",
+      "duration": 0.29940295219421387,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 6, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 57s, resets at Thu Sep 25 2025 08:46:22 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "Fake 2024",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:45:26.747574",
+      "duration": 0.35819292068481445,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 7, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 56s, resets at Thu Sep 25 2025 08:46:22 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "Einstein 2023 \"Deep Neural Networks for Quantum Computing\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:45:27.072002",
+      "duration": 0.31364893913269043,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 8, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 56s, resets at Thu Sep 25 2025 08:46:22 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "\"Deep Neural Networks for Quantum Computing\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:45:27.391737",
+      "duration": 0.30359411239624023,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 9, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 56s, resets at Thu Sep 25 2025 08:46:22 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "Einstein 2023",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:47:05.777246",
+      "duration": 0.29947400093078613,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "Einstein 2023 \"Deep Neural Networks for Quantum Computing\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:47:06.093133",
+      "duration": 0.30511021614074707,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "\"Deep Neural Networks for Quantum Computing\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:47:06.412303",
+      "duration": 0.3087317943572998,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "Einstein 2023",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:47:06.746178",
+      "duration": 0.3144218921661377,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "Fake 2024 \"Global Warming Solved by AI\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:47:07.063578",
+      "duration": 0.30523204803466797,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Payment Required: Failed to search. Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value. - No additional error details provided.",
+      "metadata": {
+        "query": "\"Global Warming Solved by AI\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:47:07.378625",
+      "duration": 0.3033759593963623,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 6, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 58s, resets at Thu Sep 25 2025 08:48:05 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "Fake 2024",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:47:07.714455",
+      "duration": 0.3164827823638916,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 7, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 58s, resets at Thu Sep 25 2025 08:48:05 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "Einstein 2023 \"Deep Neural Networks for Quantum Computing\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:47:08.043216",
+      "duration": 0.31745100021362305,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 8, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 58s, resets at Thu Sep 25 2025 08:48:05 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "\"Deep Neural Networks for Quantum Computing\"",
+        "num_results": 3,
+        "results_count": 0
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "endpoint": "search",
+      "timestamp": "2025-09-25T20:47:08.361069",
+      "duration": 0.30231499671936035,
+      "success": false,
+      "cost_usd": 0.0,
+      "tokens_used": 0,
+      "error_message": "Unexpected error during search: Status code 429. Rate limit exceeded. Consumed (req/min): 9, Remaining (req/min): 0. Upgrade your plan at https://firecrawl.dev/pricing for increased rate limits or please retry after 57s, resets at Thu Sep 25 2025 08:48:05 GMT+0000 (Coordinated Universal Time) - No additional error details provided.",
+      "metadata": {
+        "query": "Einstein 2023",
+        "num_results": 3,
+        "results_count": 0
+      }
     }
   ],
-  "last_updated": "2025-09-24T08:16:41.549777"
+  "last_updated": "2025-09-25T20:47:08.367067"
 }
