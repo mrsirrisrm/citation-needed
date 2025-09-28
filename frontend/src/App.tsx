@@ -159,7 +159,6 @@ function App() {
 
   return (
     <div className="h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col overflow-hidden">
-      {/* Modern Header */}
       <header className="header flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -225,7 +224,6 @@ function App() {
           {/* Side Panel (1/3 width) */}
           <div className="side-panel">
             <div className="h-full flex flex-col">
-              {/* Modern Tabs */}
               <div className="tabs">
                 <nav className="flex -mb-px">
                   <button
