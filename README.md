@@ -1,5 +1,7 @@
 # Citation Needed
 
+![Citation Needed](citation-needed.png)
+
 A React + FastAPI chat interface with integrated fact-checking system for academic citations. Features a large language model (GPT-4) for chat and a smaller model (GPT-3.5) for fact-checking citations using spaCy NER and web search.
 
 ## Features
@@ -84,17 +86,14 @@ Choose between Docker (recommended for quick setup) or manual installation:
 
 3. **Start the application:**
    ```bash
-   # Start backend + SearXNG
+   # Start all services (backend, frontend, and SearXNG)
    docker-compose up -d
-
-   # Or start with frontend dev server too
-   docker-compose --profile frontend up -d
    ```
 
    The application will be available at:
-   - Backend API: `http://localhost:8000`
-   - SearXNG: `http://localhost:8080`
-   - Frontend (if using profile): `http://localhost:5173`
+   - **Frontend**: `http://localhost:5173` (main application)
+   - **Backend API**: `http://localhost:8000`
+   - **SearXNG**: `http://localhost:8080`
 
 #### Option B: Manual Installation
 
@@ -131,13 +130,18 @@ Choose between Docker (recommended for quick setup) or manual installation:
 
 #### Docker (Recommended)
 ```bash
-# Start all services
+# Start all services (backend, frontend, SearXNG)
 docker-compose up -d
 
-# View logs
+# View logs for all services
 docker-compose logs -f
 
-# Stop services
+# View logs for specific service
+docker-compose logs -f frontend
+docker-compose logs -f citation-needed
+docker-compose logs -f searxng
+
+# Stop all services
 docker-compose down
 ```
 
