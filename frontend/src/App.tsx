@@ -11,7 +11,7 @@ import {
   chatApi,
   TaskPoller
 } from './services/api';
-import { MessageSquare, BarChart3, Settings, Loader2 } from 'lucide-react';
+import { MessageSquare, BarChart3, Settings, Loader2, Github, Twitter } from 'lucide-react';
 
 type TabType = 'fact-check' | 'usage' | 'status';
 
@@ -177,7 +177,35 @@ function App() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center" style={{gap: '1.5rem'}}>
+              {/* Social Links */}
+              <div className="flex items-center" style={{gap: '1rem'}}>
+                <a
+                  href="https://github.com/mrsirrisrm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-all duration-200"
+                  style={{color: '#cbd5e1'}}
+                  title="GitHub"
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#cbd5e1'}
+                >
+                  <Github className="w-5 h-5" />
+                </a>
+                <a
+                  href="https://x.com/mrsirrisrm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-all duration-200"
+                  style={{color: '#cbd5e1'}}
+                  title="Twitter/X"
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#cbd5e1'}
+                >
+                  <Twitter className="w-5 h-5" />
+                </a>
+              </div>
+
               <button
                 onClick={handleClear}
                 className="btn btn-secondary text-slate-700 bg-white bg-opacity-90 hover:bg-opacity-100"
