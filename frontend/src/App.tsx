@@ -142,19 +142,6 @@ function App() {
     setActiveCitationId(undefined);
   }, []);
 
-  // Refresh stats
-  const handleRefreshStats = useCallback(async () => {
-    try {
-      const [status, stats] = await Promise.all([
-        chatApi.getSystemStatus(),
-        chatApi.getUsageStats()
-      ]);
-      setSystemStatus(status);
-      setUsageStats(stats);
-    } catch (error) {
-      console.error('Error refreshing stats:', error);
-    }
-  }, []);
 
   if (isInitializing) {
     return (
@@ -197,20 +184,13 @@ function App() {
               >
                 Clear Chat
               </button>
-              <button
-                onClick={handleRefreshStats}
-                className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-all duration-200"
-                title="Refresh statistics"
-              >
-                <Loader2 className="w-5 h-5" />
-              </button>
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto h-[calc(100vh-7rem)] p-2">
+      <div className="w-full h-[calc(100vh-7rem)] p-2">
         <div className="main-layout">
           {/* Chat Area (2/3 width) */}
           <div className="chat-area">

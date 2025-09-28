@@ -64,10 +64,10 @@ body {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 4rem);
+  width: 100%;
   background: white;
   border-radius: 12px;
   margin: 1rem;
-  margin-right: 0;
   box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
@@ -86,6 +86,12 @@ body {
   backdrop-filter: blur(10px);
 }
 
+.chat-input form {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+}
+
 /* Modern Message Styles */
 .chat-message {
   border-radius: 16px;
@@ -93,6 +99,7 @@ body {
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
   max-width: 85%;
+  padding: 1.5rem;
 }
 
 .chat-message:hover {
@@ -290,10 +297,12 @@ body {
   flex: 1;
   min-width: 0;
   display: flex;
+  width: 100%;
 }
 
 .side-panel {
   width: 24rem;
+  flex-shrink: 0;
   background: white;
   display: flex;
   flex-direction: column;
@@ -383,9 +392,17 @@ body {
   border-color: var(--slate-300);
 }
 
+/* Send button specific styling */
+.chat-input .btn {
+  padding: 1rem 1.5rem;
+  min-width: 6rem;
+  white-space: nowrap;
+}
+
 /* Modern Input */
 .textarea {
   width: 100%;
+  min-width: 0;
   padding: 1rem;
   border: 2px solid var(--slate-200);
   border-radius: 12px;
@@ -395,6 +412,7 @@ body {
   background: white;
   transition: all 0.2s ease;
   box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
 }
 
 .textarea:focus {

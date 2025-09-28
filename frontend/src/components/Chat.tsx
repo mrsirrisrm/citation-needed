@@ -93,7 +93,7 @@ export const Chat: React.FC<ChatProps> = ({
               <div
                 className={`chat-message ${message.role === 'user' ? 'user' : 'assistant'}`}
               >
-                <div className="flex items-start space-x-2 p-3">
+                <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
                     {message.role === 'user' ? (
                       <User className="w-5 h-5 text-white" />
@@ -116,7 +116,7 @@ export const Chat: React.FC<ChatProps> = ({
         {(isSending || isLoading) && (
           <div className="flex justify-start">
             <div className="chat-message assistant" style={{maxWidth: '80%'}}>
-              <div className="flex items-center space-x-2 p-3">
+              <div className="flex items-center space-x-3">
                 <Loader2 className="w-5 h-5 loading-spinner" />
                 <span style={{color: '#6b7280'}}>
                   {isSending ? 'Sending...' : 'Processing...'}
@@ -130,8 +130,8 @@ export const Chat: React.FC<ChatProps> = ({
 
       {/* Input Form */}
       <div className="chat-input">
-        <form onSubmit={handleSubmit} className="flex space-x-2">
-          <div className="flex-1">
+        <form onSubmit={handleSubmit}>
+          <div className="flex-1 min-w-0">
             <textarea
               ref={inputRef}
               value={inputMessage}
@@ -143,14 +143,16 @@ export const Chat: React.FC<ChatProps> = ({
               disabled={isSending || isLoading}
             />
           </div>
-          <button
-            type="submit"
-            disabled={!inputMessage.trim() || isSending || isLoading}
-            className="btn btn-primary flex items-center space-x-2 self-end"
-          >
-            <Send className="w-4 h-4" />
-            <span>Send</span>
-          </button>
+          <div className="flex-shrink-0">
+            <button
+              type="submit"
+              disabled={!inputMessage.trim() || isSending || isLoading}
+              className="btn btn-primary flex items-center space-x-2"
+            >
+              <Send className="w-4 h-4" />
+              <span>Send</span>
+            </button>
+          </div>
         </form>
       </div>
     </div>
