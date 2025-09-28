@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
 import { type ChatMessage, type Citation, type FactCheckResult, highlightCitations } from '../services/api';
 
 interface ChatProps {
@@ -102,11 +105,27 @@ export const Chat: React.FC<ChatProps> = ({
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: formatMessageContent(message)
-                      }}
-                    />
+                    <div className="prose prose-slate max-w-none">
+                      {message.role === 'user' ? (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          rehypePlugins={[rehypeHighlight]}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      ) : (
+                        <div
+                          className="prose"
+                          dangerouslySetInnerHTML={{
+                            __html: highlightCitations(
+                              message.content,
+                              factCheckResults.map(r => r.citation),
+                              factCheckResults
+                            )
+                          }}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
