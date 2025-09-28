@@ -158,16 +158,14 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col overflow-hidden">
       {/* Modern Header */}
-      <header className="header">
+      <header className="header flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <div className="p-2 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
-                <MessageSquare className="w-8 h-8 text-white" />
-              </div>
-              <div className="pl-8" style={{marginLeft: '2rem'}}>
+              <MessageSquare className="w-8 h-8 text-white" />
+              <div className="pl-8">
                 <h1 className="text-2xl font-bold text-white">
                   Citation Needed
                 </h1>
@@ -177,18 +175,15 @@ function App() {
               </div>
             </div>
 
-            <div className="flex items-center" style={{gap: '1.5rem'}}>
+            <div className="flex items-center gap-6">
               {/* Social Links */}
-              <div className="flex items-center" style={{gap: '1rem'}}>
+              <div className="flex items-center gap-4">
                 <a
                   href="https://github.com/mrsirrisrm"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-all duration-200"
-                  style={{color: '#cbd5e1'}}
+                  className="p-2 text-slate-300 hover:text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-all duration-200"
                   title="GitHub"
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = '#cbd5e1'}
                 >
                   <Github className="w-5 h-5" />
                 </a>
@@ -196,11 +191,8 @@ function App() {
                   href="https://x.com/mrsirrisrm"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-all duration-200"
-                  style={{color: '#cbd5e1'}}
+                  className="p-2 text-slate-300 hover:text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-all duration-200"
                   title="Twitter/X"
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = '#cbd5e1'}
                 >
                   <Twitter className="w-5 h-5" />
                 </a>
@@ -218,8 +210,8 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <div className="w-full h-[calc(100vh-7rem)] p-2">
-        <div className="main-layout">
+      <div className="flex-1 p-2 min-h-0">
+        <div className="main-layout h-full">
           {/* Chat Area (2/3 width) */}
           <div className="chat-area">
             <Chat

@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* Modern Citation Needed Styles */
 
@@ -63,7 +61,7 @@ body {
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 4rem);
+  height: 100%;
   width: 100%;
   background: white;
   border-radius: 12px;
@@ -289,7 +287,7 @@ body {
 /* Modern Layout */
 .main-layout {
   display: flex;
-  height: calc(100vh - 4rem);
+  height: 100%;
   gap: 0;
 }
 
