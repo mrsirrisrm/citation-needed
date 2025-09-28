@@ -1,0 +1,56 @@
+# Git files
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache
+
+# Virtual environments
+env
+venv
+ENV
+env.bak
+venv.bak
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files (should be provided at runtime)
+.env
+.env.local
+.env.*.local
+
+# Frontend build files (built separately if needed)
+frontend/node_modules
+frontend/dist
+frontend/build
+
+# Development/test files
+test_*
+tests/__pycache__
+
+# Claude Code settings
+.claude
+
+# Docker files themselves
+Dockerfile
+docker-compose*.yml
+.dockerignore

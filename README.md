@@ -52,6 +52,11 @@ citation-needed/
 
 ### Prerequisites
 
+#### For Docker Setup (Recommended)
+- Docker and Docker Compose
+- OpenRouter API key (for GPT-4 and GPT-3.5 access)
+
+#### For Manual Setup
 - Python 3.12+
 - Node.js 18+ and npm (for React frontend)
 - OpenRouter API key (for GPT-4 and GPT-3.5 access)
@@ -60,6 +65,38 @@ citation-needed/
   - Firecrawl API key (cloud service)
 
 ### Installation
+
+Choose between Docker (recommended for quick setup) or manual installation:
+
+#### Option A: Docker Setup (Recommended)
+
+1. **Clone and navigate to the repository:**
+   ```bash
+   git clone <repository-url>
+   cd citation-needed
+   ```
+
+2. **Configure environment variables:**
+   ```bash
+   cp .env.docker .env
+   # Edit .env with your OpenRouter API key
+   ```
+
+3. **Start the application:**
+   ```bash
+   # Start backend + SearXNG
+   docker-compose up -d
+
+   # Or start with frontend dev server too
+   docker-compose --profile frontend up -d
+   ```
+
+   The application will be available at:
+   - Backend API: `http://localhost:8000`
+   - SearXNG: `http://localhost:8080`
+   - Frontend (if using profile): `http://localhost:5173`
+
+#### Option B: Manual Installation
 
 1. **Clone and navigate to the repository:**
    ```bash
@@ -92,7 +129,19 @@ citation-needed/
 
 ### Running the Application
 
-#### Development Mode (Frontend + Backend)
+#### Docker (Recommended)
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+#### Manual Development Mode
 ```bash
 # Terminal 1: Start the FastAPI backend
 python backend_server.py
@@ -102,13 +151,10 @@ cd frontend
 npm run dev
 ```
 
-#### Backend Only
-```bash
-python backend_server.py
-```
-
-The backend API will be available at `http://localhost:8000`
-The frontend (in dev mode) will be available at `http://localhost:5173`
+**Access URLs:**
+- Backend API: `http://localhost:8000`
+- Frontend (dev mode): `http://localhost:5173`
+- SearXNG (if using Docker): `http://localhost:8080`
 
 ### Development
 
@@ -279,6 +325,19 @@ When running the backend, visit `http://localhost:8000/docs` for interactive API
    - Check that backend is running on port 8000
    - Verify frontend is accessing the correct backend URL
 
+6. **Docker issues:**
+   ```bash
+   # Rebuild containers after code changes
+   docker-compose build --no-cache
+
+   # Check container logs
+   docker-compose logs citation-needed
+   docker-compose logs searxng
+
+   # Restart services
+   docker-compose restart
+   ```
+
 ### System Status
 - **Real-time monitoring**: Check the Status tab in the frontend
 - **API health**: Visit `http://localhost:8000/health` for backend status
@@ -287,9 +346,19 @@ When running the backend, visit `http://localhost:8000/docs` for interactive API
 
 ## Search Setup
 
-### Option 1: SearXNG (Recommended for Privacy)
+### Docker Setup (Automatic)
 
-SearXNG is a privacy-respecting metasearch engine that can be self-hosted:
+When using Docker Compose, SearXNG is **automatically included** and configured:
+- No additional setup required
+- SearXNG runs on `http://localhost:8080`
+- Privacy-focused search with no API limits
+- Automatically connected to the Citation Needed backend
+
+### Manual Setup Options
+
+#### Option 1: SearXNG (Recommended for Privacy)
+
+For manual installation, you can set up SearXNG separately:
 
 ```bash
 # Quick setup with Docker
@@ -308,7 +377,7 @@ docker run -d \
 - No API limits or costs
 - Aggregates results from multiple search engines
 
-### Option 2: Firecrawl (Cloud Service)
+#### Option 2: Firecrawl (Cloud Service)
 
 - Sign up at [firecrawl.dev](https://firecrawl.dev)
 - Get API key from dashboard
