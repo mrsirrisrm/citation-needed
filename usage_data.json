@@ -2508,7 +2508,127 @@
         "message_length": 58,
         "history_length": 0
       }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-28T01:41:38.664242",
+      "duration": 0.002748727798461914,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-28T01:41:39.452869",
+      "duration": 0.0033478736877441406,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-28T01:44:30.506387",
+      "duration": 5.760677337646484,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-28T01:44:50.672095",
+      "duration": 14.97707200050354,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 58,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-28T01:47:29.668957",
+      "duration": 4.23578405380249,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-28T01:47:31.385012",
+      "duration": 0.012280702590942383,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-28T01:47:32.106552",
+      "duration": 0.0036950111389160156,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 30,
+        "history_length": 0
+      }
+    },
+    {
+      "provider": "openrouter",
+      "endpoint": "chat_completion",
+      "timestamp": "2025-09-28T01:47:51.633333",
+      "duration": 13.823249578475952,
+      "success": true,
+      "cost_usd": 0.01,
+      "tokens_used": 0,
+      "error_message": null,
+      "metadata": {
+        "model": "openai/gpt-4-turbo-preview",
+        "message_length": 58,
+        "history_length": 0
+      }
     }
   ],
-  "last_updated": "2025-09-28T01:36:40.521447"
+  "last_updated": "2025-09-28T01:47:51.635431"
 }

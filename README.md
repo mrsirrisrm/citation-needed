@@ -6,7 +6,7 @@ A React + FastAPI chat interface with integrated fact-checking system for academ
 
 ## Features
 
-- **Modern React Frontend**: Sleek, responsive UI with vibrant color scheme and smooth animations
+- **React Frontend**: Web UI
 - **Intelligent Chat**: GPT-4 powered conversational AI with real-time message streaming
 - **Citation Detection**: Automatic extraction of academic citations using spaCy NER
 - **Fact-Checking**: GPT-3.5 powered verification of citations with web search
@@ -14,8 +14,7 @@ A React + FastAPI chat interface with integrated fact-checking system for academ
 - **Word-like Interface**: Review-style UI with highlighted citations and expandable comments
 - **Source Verification**: Links to found sources with verification status
 - **Usage Analytics**: Track API usage and system performance metrics
-- **Hallucination Detection**: Advanced testing for AI response reliability
-- **Type Safety**: Full TypeScript support with comprehensive type checking
+- **Hallucination Detection**: Testing for AI response reliability
 
 ## Architecture
 
