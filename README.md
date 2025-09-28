@@ -1,29 +1,48 @@
 # Citation Needed
 
-A Gradio-based chat interface with integrated fact-checking system for academic citations. Features a large language model (GPT-4) for chat and a smaller model (GPT-3.5) for fact-checking citations using spaCy NER and Firecrawl search.
+A React + FastAPI chat interface with integrated fact-checking system for academic citations. Features a large language model (GPT-4) for chat and a smaller model (GPT-3.5) for fact-checking citations using spaCy NER and web search.
 
 ## Features
 
-- **Intelligent Chat**: GPT-4 powered conversational AI
+- **Modern React Frontend**: Sleek, responsive UI with vibrant color scheme and smooth animations
+- **Intelligent Chat**: GPT-4 powered conversational AI with real-time message streaming
 - **Citation Detection**: Automatic extraction of academic citations using spaCy NER
 - **Fact-Checking**: GPT-3.5 powered verification of citations with web search
+- **Asynchronous Processing**: Non-blocking fact-checking with real-time progress updates
 - **Word-like Interface**: Review-style UI with highlighted citations and expandable comments
 - **Source Verification**: Links to found sources with verification status
+- **Usage Analytics**: Track API usage and system performance metrics
+- **Hallucination Detection**: Advanced testing for AI response reliability
+- **Type Safety**: Full TypeScript support with comprehensive type checking
 
 ## Architecture
 
 ```
 citation-needed/
-├── app.py              # Main Gradio application
+├── backend_server.py        # FastAPI backend server
+├── async_processor.py       # Asynchronous task processing
+├── usage_tracker.py         # API usage and analytics
 ├── models/
-│   ├── chat_model.py   # Model A (GPT-4) wrapper
-│   ├── fact_checker.py # Model B (GPT-3.5) + DSPy signatures
-│   └── ner_extractor.py # spaCy academic citation NER
+│   ├── chat_model.py        # Model A (GPT-4) wrapper
+│   ├── fact_checker.py      # Model B (GPT-3.5) + DSPy signatures
+│   ├── ner_extractor.py     # spaCy academic citation NER
+│   ├── citation_parser.py   # Citation parsing utilities
+│   └── types.py             # Type definitions
 ├── search/
-│   └── firecrawl_client.py # Firecrawl integration
-├── ui/
-│   ├── components.py   # Custom Gradio components
-│   └── styles.css      # Word-like review styling
+│   ├── firecrawl_client.py  # Firecrawl integration
+│   └── searxng_client.py    # SearXNG search integration
+├── frontend/
+│   ├── src/
+│   │   ├── App.tsx          # Main React application
+│   │   ├── components/      # React components
+│   │   │   ├── Chat.tsx     # Chat interface
+│   │   │   ├── FactCheckPanel.tsx # Fact-checking results
+│   │   │   ├── SystemStatus.tsx   # System status display
+│   │   │   └── UsageStatsPanel.tsx # Usage analytics
+│   │   └── index.css        # Modern styling with Tailwind
+│   ├── package.json
+│   └── vite.config.ts       # Vite build configuration
+├── tests/                   # Comprehensive test suite
 ├── requirements.txt
 ├── .env.example
 └── README.md
@@ -34,8 +53,11 @@ citation-needed/
 ### Prerequisites
 
 - Python 3.12+
+- Node.js 18+ and npm (for React frontend)
 - OpenRouter API key (for GPT-4 and GPT-3.5 access)
-- Firecrawl API key (for web search)
+- **Search service** (choose one):
+  - SearXNG instance URL (self-hosted, privacy-focused), OR
+  - Firecrawl API key (cloud service)
 
 ### Installation
 
@@ -45,17 +67,24 @@ citation-needed/
    cd citation-needed
    ```
 
-2. **Install dependencies:**
+2. **Install Python dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Download spaCy model:**
+3. **Install frontend dependencies:**
+   ```bash
+   cd frontend
+   npm install
+   cd ..
+   ```
+
+4. **Download spaCy model:**
    ```bash
    python -m spacy download en_core_web_sm
    ```
 
-4. **Configure environment variables:**
+5. **Configure environment variables:**
    ```bash
    cp .env.example .env
    # Edit .env with your API keys
@@ -63,53 +92,99 @@ citation-needed/
 
 ### Running the Application
 
+#### Development Mode (Frontend + Backend)
 ```bash
-python app.py
+# Terminal 1: Start the FastAPI backend
+python backend_server.py
+
+# Terminal 2: Start the React frontend
+cd frontend
+npm run dev
 ```
 
-The application will be available at `http://localhost:7860`
+#### Backend Only
+```bash
+python backend_server.py
+```
+
+The backend API will be available at `http://localhost:8000`
+The frontend (in dev mode) will be available at `http://localhost:5173`
 
 ### Development
 
 #### Code Quality
-The project uses Ruff for linting and formatting:
+The project uses Ruff for Python linting and formatting, plus ESLint for TypeScript:
 ```bash
-# Check code quality
-ruff check .
+# Python code quality
+ruff check .          # Check issues
+ruff check --fix .    # Auto-fix issues
+ruff format .         # Format code
 
-# Auto-fix issues
-ruff check --fix .
-
-# Format code
-ruff format .
+# Frontend code quality
+cd frontend
+npm run lint          # Check TypeScript/React issues
+npm run build         # Type-check and build
 ```
 
-#### Required Environment Variables
+#### Testing
+Run the comprehensive test suite:
+```bash
+# Run all tests
+python run_tests.py
+
+# Run specific test categories
+python run_tests.py ner           # NER extraction tests
+python run_tests.py fact_checker  # Fact-checking tests
+python run_tests.py integration   # Integration tests
+
+# Run individual test files
+python test_hallucination.py      # Hallucination detection
+python test_usage_tracking.py     # Usage analytics
+```
+
+#### Environment Variables
+
+##### Required
 ```
 OPENROUTER_API_KEY=your_openrouter_api_key_here
+```
+
+##### Search Configuration (Choose One)
+```bash
+# Option 1: Use SearXNG (privacy-focused, self-hosted)
+SEARXNG_URL=http://localhost:8080
+
+# Option 2: Use Firecrawl (cloud service)
 FIRECRAWL_API_KEY=your_firecrawl_api_key_here
 ```
 
-### Running the Application
-
-```bash
-python app.py
-```
-
-The application will be available at `http://localhost:7860`
+**Search Priority**: If `SEARXNG_URL` is set, it will be used for web search. Otherwise, the system falls back to Firecrawl. If neither is configured, a mock search client is used for development.
 
 ## Usage
 
-1. **Start a conversation** by typing a message about academic topics
-2. **Citations are automatically detected** in the AI's response
-3. **Fact-checking happens automatically** using web search
-4. **Review results** in the right panel with:
-   - Highlighted citations in the text
-   - Expandable comments with verification status
-   - Links to found sources
-   - Confidence scores
+1. **Open the application** in your browser (usually `http://localhost:5173` for development)
+2. **Start a conversation** by typing a message about academic topics in the chat interface
+3. **Citations are automatically detected** in the AI's response using spaCy NER
+4. **Fact-checking happens asynchronously** with real-time progress updates
+5. **Review results** in the dedicated panels:
+   - **Chat Tab**: View conversation history with highlighted citations
+   - **Fact-Check Tab**: Detailed verification results with source links
+   - **Usage Tab**: API usage statistics and performance metrics
+   - **Status Tab**: System component health and version information
 
 ## System Components
+
+### Frontend (React + TypeScript)
+- **Framework**: React 18 with TypeScript and Vite
+- **Styling**: Tailwind CSS with modern gradient design
+- **Components**: Modular chat, fact-checking, and analytics panels
+- **Features**: Real-time updates, responsive design, accessibility support
+
+### Backend (FastAPI)
+- **Framework**: FastAPI with asynchronous processing
+- **API**: RESTful endpoints with automatic OpenAPI documentation
+- **Processing**: Background task management for non-blocking operations
+- **Analytics**: Built-in usage tracking and performance monitoring
 
 ### Model A (Chat Model)
 - **Model**: GPT-4 via OpenRouter
@@ -127,7 +202,8 @@ The application will be available at `http://localhost:7860`
 - **Patterns**: Author-year format, full citations, academic URLs
 
 ### Search Integration
-- **Service**: Firecrawl for web search and scraping
+- **Primary**: Firecrawl for web search and scraping
+- **Alternative**: SearXNG integration for privacy-focused search
 - **Domains**: Academic sources (PubMed, arXiv, DOI, etc.)
 - **Fallback**: Mock client for testing without API keys
 
@@ -167,7 +243,12 @@ self.citation_patterns.append(new_pattern)
 ```
 
 ### Customizing UI
-Modify `ui/styles.css` for styling and `ui/components.py` for HTML generation.
+- **React Components**: Modify files in `frontend/src/components/`
+- **Styling**: Update `frontend/src/index.css` and Tailwind configuration
+- **Build Configuration**: Adjust `frontend/vite.config.ts` and `frontend/tsconfig.json`
+
+### API Documentation
+When running the backend, visit `http://localhost:8000/docs` for interactive API documentation powered by FastAPI and OpenAPI.
 
 ## Troubleshooting
 
@@ -186,10 +267,53 @@ Modify `ui/styles.css` for styling and `ui/components.py` for HTML generation.
    - Ensure all dependencies installed: `pip install -r requirements.txt`
    - Check Python version is 3.12+
 
+4. **Frontend build issues:**
+   ```bash
+   cd frontend
+   rm -rf node_modules package-lock.json
+   npm install
+   ```
+
+5. **CORS errors:**
+   - Backend automatically configures CORS for frontend
+   - Check that backend is running on port 8000
+   - Verify frontend is accessing the correct backend URL
+
 ### System Status
-The application shows component status on startup:
-- ✓ Working correctly
-- ✗ Error (check console output)
+- **Real-time monitoring**: Check the Status tab in the frontend
+- **API health**: Visit `http://localhost:8000/health` for backend status
+- **Component status**: ✓ Working correctly, ✗ Error (check console output)
+- **Usage metrics**: Available in the Usage tab with detailed analytics
+
+## Search Setup
+
+### Option 1: SearXNG (Recommended for Privacy)
+
+SearXNG is a privacy-respecting metasearch engine that can be self-hosted:
+
+```bash
+# Quick setup with Docker
+docker run -d \
+  --name searxng \
+  -p 8080:8080 \
+  searxng/searxng
+
+# Then set in .env:
+# SEARXNG_URL=http://localhost:8080
+```
+
+**Benefits:**
+- Privacy-focused (no tracking)
+- Self-hosted (full control)
+- No API limits or costs
+- Aggregates results from multiple search engines
+
+### Option 2: Firecrawl (Cloud Service)
+
+- Sign up at [firecrawl.dev](https://firecrawl.dev)
+- Get API key from dashboard
+- Used for academic source search and scraping
+- Set `FIRECRAWL_API_KEY` in your `.env` file
 
 ## API Keys
 
@@ -197,11 +321,6 @@ The application shows component status on startup:
 - Sign up at [openrouter.ai](https://openrouter.ai)
 - Get API key from dashboard
 - Supports GPT-4 and GPT-3.5-turbo
-
-### Firecrawl
-- Sign up at [firecrawl.dev](https://firecrawl.dev)
-- Get API key from dashboard
-- Used for academic source search and scraping
 
 ## Contributing
 
